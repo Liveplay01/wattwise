@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 interface MetricRowProps {
-  label: string;
+  label: ReactNode;
   value: string;
   highlight?: boolean;
 }

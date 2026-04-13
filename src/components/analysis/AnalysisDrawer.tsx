@@ -1,6 +1,8 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import AbbreviationLegend from "./AbbreviationLegend";
+import { Abbr, ABBR } from "@/components/ui/abbr";
 import {
   Drawer,
   DrawerContent,
@@ -110,9 +112,9 @@ export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, er
                   ☀️ Solar-Details
                 </p>
                 <div className="divide-y divide-border/50">
-                  <MetricRow label="Sonneneinstrahlung" value={data.metrics.solar.strahlungswert} />
+                  <MetricRow label={<>Sonneneinstrahlung (<Abbr {...ABBR.kWhM2} />)</>} value={data.metrics.solar.strahlungswert} />
                   <MetricRow label="Einstrahlungsklasse" value={data.metrics.solar.einstrahlungsklasse} />
-                  <MetricRow label="Geschätzter Jahresertrag" value={data.metrics.solar.jahresertrag} highlight />
+                  <MetricRow label={<>Gesch. Jahresertrag (<Abbr {...ABBR.kWhKwp} />)</>} value={data.metrics.solar.jahresertrag} highlight />
                 </div>
               </div>
 
@@ -122,8 +124,8 @@ export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, er
                   🌬️ Wind-Details
                 </p>
                 <div className="divide-y divide-border/50">
-                  <MetricRow label="Windgeschwindigkeit (Ø)" value={data.metrics.wind.mittlereWindgeschwindigkeit} />
-                  <MetricRow label="Windklasse" value={data.metrics.wind.windklasse} />
+                  <MetricRow label={<>Ø Windgeschwindigkeit (<Abbr {...ABBR.ms} />)</>} value={data.metrics.wind.mittlereWindgeschwindigkeit} />
+                  <MetricRow label={<><Abbr {...ABBR.IEC} />-Windklasse</>} value={data.metrics.wind.windklasse} />
                   <MetricRow label="Spitzengeschwindigkeit" value={data.metrics.wind.spitzengeschwindigkeit} />
                 </div>
               </div>
@@ -136,10 +138,13 @@ export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, er
                 <div className="divide-y divide-border/50">
                   <MetricRow label="Gewässernähe" value={data.metrics.water.gewaessernähe} />
                   <MetricRow label="Gewässer im Umkreis 2 km" value={String(data.metrics.water.anzahlGewaesser)} />
-                  <MetricRow label="Höhenlage" value={data.metrics.water.hoehenlage} />
+                  <MetricRow label={<>Höhenlage (<Abbr {...ABBR.mNN} />)</>} value={data.metrics.water.hoehenlage} />
                   <MetricRow label="Potenzialklasse" value={data.metrics.water.potenzialklasse} highlight />
                 </div>
               </div>
+
+              {/* Abbreviation legend */}
+              <AbbreviationLegend />
 
               <p className="text-[11px] text-muted-foreground/60 text-center pb-2">
                 Daten: Open-Meteo API · OpenStreetMap Overpass API · Keine Gewähr

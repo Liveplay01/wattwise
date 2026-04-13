@@ -5,6 +5,7 @@ import { Sun, Wind, Droplets, ChevronDown, ExternalLink, ShieldCheck, AlertTrian
 import { cn } from "@/lib/utils";
 import { getScoreLabel, ENERGY_INFO, ENERGY_LINKS } from "@/lib/energy/constants";
 import type { CostInfo, EnergyType } from "@/lib/energy/types";
+import { Abbr, ABBR } from "@/components/ui/abbr";
 
 const ICONS = { solar: Sun, wind: Wind, water: Droplets };
 const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft" };
@@ -19,9 +20,10 @@ const DIFFICULTY_COLORS = {
   "Sehr komplex": "text-red-400 bg-red-400/10 border-red-400/20",
 };
 
-function formatEur(n: number): string {
-  return n >= 1000 ? `${(n / 1000).toFixed(0)} T€` : `${n} €`;
+function formatEurNum(n: number): string {
+  return n >= 1000 ? `${(n / 1000).toFixed(0)} ` : `${n} €`;
 }
+function isThousands(n: number): boolean { return n >= 1000; }
 
 interface EnergyScoreCardProps {
   type: EnergyType;
@@ -91,10 +93,12 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
             {costInfo.difficulty}
           </span>
           <span className="text-[10px] text-muted-foreground">
-            {formatEur(costInfo.minEur)} – {formatEur(costInfo.maxEur)}
+            {formatEurNum(costInfo.minEur)}{isThousands(costInfo.minEur) && <Abbr {...ABBR.TEur} />}
+            {" – "}
+            {formatEurNum(costInfo.maxEur)}{isThousands(costInfo.maxEur) && <Abbr {...ABBR.TEur} />}
           </span>
           <span className="text-[10px] text-muted-foreground">·</span>
-          <span className="text-[10px] text-muted-foreground">ROI: {costInfo.paybackYears}</span>
+          <span className="text-[10px] text-muted-foreground"><Abbr {...ABBR.ROI} />: {costInfo.paybackYears}</span>
           {costInfo.permitRequired && (
             <span className="text-[10px] text-yellow-400/80 flex items-center gap-0.5">
               <AlertTriangle className="w-3 h-3" /> Genehmigung
