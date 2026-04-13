@@ -31,13 +31,7 @@ interface AnalysisDrawerProps {
   error: Error | null;
 }
 
-export default function AnalysisDrawer({
-  open,
-  onOpenChange,
-  isLoading,
-  data,
-  error,
-}: AnalysisDrawerProps) {
+export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, error }: AnalysisDrawerProps) {
   const step = getStep(isLoading, data);
 
   return (
@@ -45,9 +39,7 @@ export default function AnalysisDrawer({
       <DrawerContent className="max-h-[90vh] flex flex-col">
         <DrawerHeader className="pb-2">
           <div className="flex items-center justify-between">
-            <DrawerTitle className="text-base text-foreground">
-              Standortanalyse
-            </DrawerTitle>
+            <DrawerTitle className="text-base text-foreground">Standortanalyse</DrawerTitle>
             <AppBreadcrumb step={step} />
           </div>
           <DrawerDescription className="sr-only">
@@ -56,7 +48,7 @@ export default function AnalysisDrawer({
         </DrawerHeader>
 
         <div className="overflow-y-auto flex-1 pb-safe">
-          {/* Error state */}
+          {/* Error */}
           {error && !isLoading && (
             <div className="mx-4 mb-4 rounded-lg border border-destructive/40 bg-destructive/10 p-4 flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
@@ -67,7 +59,7 @@ export default function AnalysisDrawer({
             </div>
           )}
 
-          {/* Loading skeleton */}
+          {/* Loading */}
           {isLoading && <AnalysisSkeleton />}
 
           {/* Results */}
@@ -84,21 +76,30 @@ export default function AnalysisDrawer({
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2 px-0.5">
                   Alle Energiequellen im Vergleich
                 </p>
+                <p className="text-[10px] text-muted-foreground/70 mb-3 px-0.5">
+                  Score = Potenzial × Kosten-Faktor · Tippe eine Karte auf für Details & Anbieter
+                </p>
                 <div className="space-y-2">
                   <EnergyScoreCard
                     type="solar"
                     score={data.solar}
+                    adjustedScore={data.solarAdjusted}
                     isRecommended={data.recommendation === "solar"}
+                    costInfo={data.costInfo.solar}
                   />
                   <EnergyScoreCard
                     type="wind"
                     score={data.wind}
+                    adjustedScore={data.windAdjusted}
                     isRecommended={data.recommendation === "wind"}
+                    costInfo={data.costInfo.wind}
                   />
                   <EnergyScoreCard
                     type="water"
                     score={data.water}
+                    adjustedScore={data.waterAdjusted}
                     isRecommended={data.recommendation === "water"}
+                    costInfo={data.costInfo.water}
                   />
                 </div>
               </div>
@@ -141,7 +142,7 @@ export default function AnalysisDrawer({
               </div>
 
               <p className="text-[11px] text-muted-foreground/60 text-center pb-2">
-                Daten: Open-Meteo API · OpenStreetMap Overpass API
+                Daten: Open-Meteo API · OpenStreetMap Overpass API · Keine Gewähr
               </p>
             </div>
           )}

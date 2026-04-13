@@ -19,10 +19,22 @@ export interface WaterMetrics {
   potenzialklasse: string;
 }
 
+export interface CostInfo {
+  minEur: number;
+  maxEur: number;
+  paybackYears: string;
+  difficulty: "Einfach" | "Anspruchsvoll" | "Sehr komplex";
+  permitRequired: boolean;
+  costFactor: number; // 0–1 weight applied to raw score
+}
+
 export interface EnergyScore {
-  solar: number;
+  solar: number;        // raw potential score 0–100
   wind: number;
   water: number;
+  solarAdjusted: number;  // cost-weighted score
+  windAdjusted: number;
+  waterAdjusted: number;
   recommendation: EnergyType;
   recommendationLabel: string;
   reasoning: string;
@@ -33,6 +45,11 @@ export interface EnergyScore {
     solar: SolarMetrics;
     wind: WindMetrics;
     water: WaterMetrics;
+  };
+  costInfo: {
+    solar: CostInfo;
+    wind: CostInfo;
+    water: CostInfo;
   };
   rawData: {
     solarRadiation: number;
