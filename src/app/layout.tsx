@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   description:
     "Wattwise zeigt dir, ob sich auf deinem Grundstück eine Solaranlage, ein Windrad oder ein Wasserrad am meisten lohnt — basierend auf echten Daten.",
   keywords: ["Solar", "Wind", "Wasserkraft", "Erneuerbare Energie", "Deutschland"],
+  icons: {
+    icon: "/wattwise/icon.svg",
+    shortcut: "/wattwise/icon.svg",
+    apple: "/wattwise/icon.svg",
+  },
 };
 
 export default function RootLayout({
