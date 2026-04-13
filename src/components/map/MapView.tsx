@@ -15,6 +15,7 @@ const MapClient = dynamic(() => import("./MapClient"), {
 
 interface MapViewProps {
   onLocationSelect: (lat: number, lng: number) => void;
+  onInvalidClick?: (reason: string) => void;
   selectedLat?: number;
   selectedLng?: number;
 }

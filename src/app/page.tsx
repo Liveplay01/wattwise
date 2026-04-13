@@ -13,6 +13,7 @@ import { useMapLocation } from "@/hooks/useMapLocation";
 export default function Home() {
   const { location, selectLocation } = useMapLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
 
   const { data, isLoading, error } = useEnergyAnalysis(location);
 
@@ -40,29 +41,44 @@ export default function Home() {
     [handleLocationSelect]
   );
 
+  const handleInvalidClick = useCallback((msg: string) => {
+    setInvalidMsg(msg);
+    setTimeout(() => setInvalidMsg(null), 3000);
+  }, []);
+
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-[#1c1c1c]">
       {/* Full-screen map */}
       <div className="absolute inset-0">
         <MapView
           onLocationSelect={handleMapClick}
+          onInvalidClick={handleInvalidClick}
           selectedLat={location?.lat}
           selectedLng={location?.lng}
         />
       </div>
 
-      {/* Top bar with logo + WDG badge */}
+      {/* Top bar with logo + WDG badge + tutorial */}
       <TopBar />
 
-      {/* Demo disclaimer banner */}
-      <DemoBanner />
-
-      {/* Floating search bar */}
-      <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 pointer-events-none">
-        <div className="max-w-lg mx-auto pointer-events-auto mt-10">
+      {/* Demo banner + search stacked, unterhalb TopBar */}
+      <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">
+        <div className="w-full max-w-lg pointer-events-auto">
+          <DemoBanner />
+        </div>
+        <div className="w-full max-w-lg pointer-events-auto">
           <AddressSearch onSelect={handleAddressSelect} />
         </div>
       </div>
+
+      {/* Ungültiger Klick – Toast */}
+      {invalidMsg && (
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] pointer-events-none">
+          <div className="rounded-xl border border-destructive/40 bg-card/95 backdrop-blur-md px-5 py-3 shadow-xl text-sm text-destructive text-center max-w-xs">
+            {invalidMsg}
+          </div>
+        </div>
+      )}
 
       {/* Hint when no location selected */}
       {!location && <HintOverlay />}
@@ -70,7 +86,7 @@ export default function Home() {
       {/* Footer */}
       <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
         <p className="text-[10px] text-muted-foreground/50 whitespace-nowrap">
-          Ein Schulprojekt der WDG Schule Wuppertal
+          Ein Schulprojekt des Wilhelm-Dörpfeld-Gymnasiums Wuppertal
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, useMapEvents, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LocationMarker from "./LocationMarker";
@@ -20,17 +20,61 @@ const GERMANY_BOUNDS: [[number, number], [number, number]] = [
   [55.06, 15.03],
 ];
 
-interface ClickHandlerProps {
-  onLocationSelect: (lat: number, lng: number) => void;
+// OSM classes that count as selectable property
+const ALLOWED_CLASSES = new Set(["building"]);
+const ALLOWED_LANDUSE = new Set(["residential", "garden", "allotments", "farmyard", "farm"]);
+
+async function checkIsProperty(lat: number, lng: number): Promise<{ ok: boolean; reason?: string }> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18`,
+      { headers: { "Accept-Language": "de", "User-Agent": "Wattwise/1.0 WDG-Schulprojekt" } }
+    );
+    if (!res.ok) return { ok: true }; // Im Zweifel erlauben
+    const data = await res.json();
+    const cls: string = data.class ?? "";
+    const type: string = data.type ?? "";
+
+    if (ALLOWED_CLASSES.has(cls)) return { ok: true };
+    if (cls === "landuse" && ALLOWED_LANDUSE.has(type)) return { ok: true };
+    if (cls === "place" && type === "house") return { ok: true };
+
+    if (cls === "highway" || cls === "railway" || cls === "aeroway") {
+      return { ok: false, reason: "Straßen und Wege können nicht analysiert werden. Bitte wähle ein Gebäude oder Grundstück." };
+    }
+    if (cls === "leisure" || (cls === "landuse" && ["park", "recreation_ground", "grass", "forest"].includes(type))) {
+      return { ok: false, reason: "Öffentliche Grünflächen sind nicht auswählbar. Bitte wähle ein Wohngrundstück." };
+    }
+    if (cls === "amenity" || cls === "tourism" || cls === "boundary") {
+      return { ok: false, reason: "Öffentliche Orte können nicht analysiert werden. Bitte wähle ein Haus oder einen Garten." };
+    }
+
+    // Unbekannte Klasse – im Zweifel ablehnen und Hinweis geben
+    return { ok: false, reason: "Bitte wähle ein Gebäude oder ein Wohngrundstück aus." };
+  } catch {
+    return { ok: true }; // Netzwerkfehler → trotzdem erlauben
+  }
 }
 
-function ClickHandler({ onLocationSelect }: ClickHandlerProps) {
+interface ClickHandlerProps {
+  onLocationSelect: (lat: number, lng: number) => void;
+  onInvalidClick?: (reason: string) => void;
+}
+
+function ClickHandler({ onLocationSelect, onInvalidClick }: ClickHandlerProps) {
   useMapEvents({
-    click(e) {
+    async click(e) {
       const { lat, lng } = e.latlng;
-      if (isInGermany(lat, lng)) {
-        onLocationSelect(lat, lng);
+      if (!isInGermany(lat, lng)) {
+        onInvalidClick?.("Wattwise analysiert nur Standorte in Deutschland.");
+        return;
       }
+      const { ok, reason } = await checkIsProperty(lat, lng);
+      if (!ok) {
+        onInvalidClick?.(reason ?? "Bitte wähle ein Gebäude oder Grundstück.");
+        return;
+      }
+      onLocationSelect(lat, lng);
     },
   });
   return null;
@@ -38,12 +82,14 @@ function ClickHandler({ onLocationSelect }: ClickHandlerProps) {
 
 interface MapClientProps {
   onLocationSelect: (lat: number, lng: number) => void;
+  onInvalidClick?: (reason: string) => void;
   selectedLat?: number;
   selectedLng?: number;
 }
 
 export default function MapClient({
   onLocationSelect,
+  onInvalidClick,
   selectedLat,
   selectedLng,
 }: MapClientProps) {
@@ -57,13 +103,16 @@ export default function MapClient({
       maxBoundsViscosity={0.8}
       className="w-full h-full"
       style={{ background: "#1c1c1c" }}
+      zoomControl={false}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         subdomains="abcd"
       />
-      <ClickHandler onLocationSelect={onLocationSelect} />
+      {/* Zoom-Buttons unten rechts, weg vom Logo */}
+      <ZoomControl position="bottomright" />
+      <ClickHandler onLocationSelect={onLocationSelect} onInvalidClick={onInvalidClick} />
       {selectedLat !== undefined && selectedLng !== undefined && (
         <LocationMarker lat={selectedLat} lng={selectedLng} />
       )}

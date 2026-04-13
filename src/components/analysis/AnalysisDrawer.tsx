@@ -41,7 +41,7 @@ export default function AnalysisDrawer({
   const step = getStep(isLoading, data);
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={onOpenChange} shouldScaleBackground={false}>
       <DrawerContent className="max-h-[90vh] flex flex-col">
         <DrawerHeader className="pb-2">
           <div className="flex items-center justify-between">
