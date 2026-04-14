@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { HelpCircle, Info, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { useTheme } from "@/hooks/useTheme";
 
 function WattwiseLogo({ className }: { className?: string }) {
   return (
@@ -36,10 +35,15 @@ function SideDrawer({
   );
 }
 
-export default function TopBar() {
+interface TopBarProps {
+  theme: "dark" | "light";
+  toggleTheme: () => void;
+  onOpenPreferences: () => void;
+}
+
+export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBarProps) {
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   return (
     <>
@@ -62,6 +66,15 @@ export default function TopBar() {
               aria-label="API-Informationen"
             >
               <Info className="w-5 h-5" />
+            </button>
+
+            {/* Präferenzen anpassen */}
+            <button
+              onClick={onOpenPreferences}
+              className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
+              aria-label="Analyse-Präferenzen anpassen"
+            >
+              <SlidersHorizontal className="w-5 h-5" />
             </button>
 
             {/* Light / Dark Mode Toggle */}

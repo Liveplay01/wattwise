@@ -12,12 +12,14 @@ import PreferencesModal from "@/components/PreferencesModal";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useTheme } from "@/hooks/useTheme";
 import { isInGermany } from "@/lib/utils";
 import type { UserPreferences } from "@/lib/energy/types";
 
 export default function Home() {
   const { location, selectLocation } = useMapLocation();
   const { preferences, setPreferences, skipForever, setSkipForever } = useUserPreferences();
+  const { theme, toggleTheme } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
 
@@ -48,12 +50,16 @@ export default function Home() {
       if (forever) setSkipForever(true);
       setPrefsModalOpen(false);
       if (pendingLocation) {
+        // Triggered from map click — select location and open drawer
         const success = selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
         if (success) setDrawerOpen(true);
         setPendingLocation(null);
+      } else if (location) {
+        // Triggered from TopBar — re-open drawer so results refresh with new prefs
+        setDrawerOpen(true);
       }
     },
-    [pendingLocation, setPreferences, setSkipForever, selectLocation]
+    [pendingLocation, location, setPreferences, setSkipForever, selectLocation]
   );
 
   const handlePrefsSkip = useCallback(() => {
@@ -64,6 +70,10 @@ export default function Home() {
       setPendingLocation(null);
     }
   }, [pendingLocation, selectLocation]);
+
+  const handleOpenPreferences = useCallback(() => {
+    setPrefsModalOpen(true);
+  }, []);
 
   const handleMapClick = useCallback(
     (lat: number, lng: number) => {
@@ -85,7 +95,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-[#1c1c1c]">
+    <main className="relative w-screen h-screen overflow-hidden bg-background">
       {/* Full-screen map */}
       <div className="absolute inset-0">
         <MapView
@@ -93,11 +103,12 @@ export default function Home() {
           onInvalidClick={handleInvalidClick}
           selectedLat={location?.lat}
           selectedLng={location?.lng}
+          theme={theme}
         />
       </div>
 
       {/* Top bar with logo + WDG badge + tutorial */}
-      <TopBar />
+      <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} />
 
       {/* Demo banner + search stacked, unterhalb TopBar */}
       <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">

@@ -80,11 +80,15 @@ function ClickHandler({ onLocationSelect, onInvalidClick }: ClickHandlerProps) {
   return null;
 }
 
+const TILE_DARK  = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const TILE_LIGHT = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+
 interface MapClientProps {
   onLocationSelect: (lat: number, lng: number) => void;
   onInvalidClick?: (reason: string) => void;
   selectedLat?: number;
   selectedLng?: number;
+  theme?: "dark" | "light";
 }
 
 export default function MapClient({
@@ -92,7 +96,11 @@ export default function MapClient({
   onInvalidClick,
   selectedLat,
   selectedLng,
+  theme = "dark",
 }: MapClientProps) {
+  const tileUrl  = theme === "light" ? TILE_LIGHT : TILE_DARK;
+  const mapBg    = theme === "light" ? "#f7f7f7" : "#1c1c1c";
+
   return (
     <MapContainer
       center={GERMANY_CENTER}
@@ -102,12 +110,12 @@ export default function MapClient({
       maxBounds={GERMANY_BOUNDS}
       maxBoundsViscosity={0.8}
       className="w-full h-full"
-      style={{ background: "#1c1c1c" }}
+      style={{ background: mapBg }}
       zoomControl={false}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        url={tileUrl}
         subdomains="abcd"
       />
       {/* Zoom-Buttons unten rechts, weg vom Logo */}
