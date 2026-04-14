@@ -5,7 +5,7 @@
 
 import { isInGermany } from "@/lib/utils";
 import { computeEnergyScore } from "@/lib/energy/scoring";
-import type { EnergyScore } from "@/lib/energy/types";
+import type { EnergyScore, UserPreferences } from "@/lib/energy/types";
 
 async function fetchOpenMeteoForecast(lat: number, lng: number) {
   const today = new Date();
@@ -65,7 +65,8 @@ async function fetchWaterways(lat: number, lng: number): Promise<number> {
 export async function analyseLocation(
   lat: number,
   lng: number,
-  address?: string
+  address?: string,
+  prefs?: UserPreferences
 ): Promise<EnergyScore> {
   if (!isInGermany(lat, lng)) {
     throw new Error(
@@ -114,6 +115,7 @@ export async function analyseLocation(
     },
     lat,
     lng,
-    address
+    address,
+    prefs
   );
 }

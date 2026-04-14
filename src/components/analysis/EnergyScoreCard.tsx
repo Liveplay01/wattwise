@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { getScoreLabel, ENERGY_INFO, ENERGY_LINKS } from "@/lib/energy/constants";
 import type { CostInfo, EnergyType } from "@/lib/energy/types";
 import { Abbr, ABBR } from "@/components/ui/abbr";
+import { Tooltip } from "@/components/ui/tooltip";
 
 const ICONS = { solar: Sun, wind: Wind, water: Droplets, geothermal: Thermometer };
 const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft", geothermal: "Geothermie" };
@@ -13,6 +14,13 @@ const COLORS = { solar: "text-yellow-400", wind: "text-blue-400", water: "text-c
 const BG_COLORS = { solar: "bg-yellow-400/10", wind: "bg-blue-400/10", water: "bg-cyan-400/10", geothermal: "bg-orange-400/10" };
 const BAR_COLORS = { solar: "bg-yellow-400", wind: "bg-blue-400", water: "bg-cyan-400", geothermal: "bg-orange-400" };
 const BORDER_COLORS = { solar: "border-yellow-400/20", wind: "border-blue-400/20", water: "border-cyan-400/20", geothermal: "border-orange-400/20" };
+
+const SCORE_TOOLTIPS: Record<EnergyType, string> = {
+  solar:      "Basiert auf Sonneneinstrahlung (kWh/m²/Tag)",
+  wind:       "Basiert auf durchschn. Windgeschwindigkeit (m/s)",
+  water:      "Basiert auf Anzahl Gewässer + Höhenlage",
+  geothermal: "Basiert auf Grundtemperatur + Tiefenprofil",
+};
 
 const DIFFICULTY_COLORS = {
   "Einfach": "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
@@ -51,9 +59,11 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
       {/* Header row */}
       <div className="p-4">
         <div className="flex items-center gap-3 mb-3">
-          <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0", BG_COLORS[type])}>
-            <Icon className={cn("w-5 h-5", COLORS[type])} />
-          </div>
+          <Tooltip content={SCORE_TOOLTIPS[type]}>
+            <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 cursor-help", BG_COLORS[type])}>
+              <Icon className={cn("w-5 h-5", COLORS[type])} />
+            </div>
+          </Tooltip>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-sm font-medium text-foreground">{LABELS[type]}</p>
@@ -67,14 +77,18 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
           </div>
           {/* Scores */}
           <div className="text-right flex-shrink-0">
-            <div className={cn("text-lg font-bold tabular-nums", isRecommended ? "text-primary" : "text-foreground")}>
-              {adjustedScore}
-              <span className="text-xs font-normal text-muted-foreground">/100</span>
-            </div>
-            {score !== adjustedScore && (
-              <div className="text-[10px] text-muted-foreground/60">
-                Potenzial: {score}
+            <Tooltip content="Gewichteter Score = Potenzial × Kosten-Faktor">
+              <div className={cn("text-lg font-bold tabular-nums cursor-help", isRecommended ? "text-primary" : "text-foreground")}>
+                {adjustedScore}
+                <span className="text-xs font-normal text-muted-foreground">/100</span>
               </div>
+            </Tooltip>
+            {score !== adjustedScore && (
+              <Tooltip content="Rohwert vor Kosten-Gewichtung" side="bottom">
+                <div className="text-[10px] text-muted-foreground/60 cursor-help">
+                  Potenzial: {score}
+                </div>
+              </Tooltip>
             )}
           </div>
         </div>

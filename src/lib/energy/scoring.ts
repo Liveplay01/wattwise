@@ -1,5 +1,5 @@
 import { clamp } from "@/lib/utils";
-import type { EnergyScore, EnergyType } from "./types";
+import type { EnergyScore, EnergyType, UserPreferences } from "./types";
 import {
   ENERGY_LABELS,
   COST_INFO,
@@ -87,7 +87,8 @@ export function computeEnergyScore(
   data: RawApiData,
   lat: number,
   lng: number,
-  address?: string
+  address?: string,
+  prefs?: UserPreferences
 ): EnergyScore {
   // Raw potential scores
   const solar = computeSolarScore(data.solarRadiation);
@@ -95,11 +96,39 @@ export function computeEnergyScore(
   const water = computeWaterScore(data.waterwayCount, data.elevation);
   const geothermal = computeGeothermalScore(data.meanTemperature, data.elevation);
 
-  // Cost-adjusted scores (raw × cost factor)
-  const solarAdj = Math.round(solar * COST_INFO.solar.costFactor);
-  const windAdj = Math.round(wind * COST_INFO.wind.costFactor);
-  const waterAdj = Math.round(water * COST_INFO.water.costFactor);
-  const geothermalAdj = Math.round(geothermal * COST_INFO.geothermal.costFactor);
+  // Effective cost factors — start from base values, apply preference deltas
+  let solarCF = COST_INFO.solar.costFactor;       // 1.00
+  let windCF  = COST_INFO.wind.costFactor;         // 0.75
+  let waterCF = COST_INFO.water.costFactor;        // 0.65
+  let geoCF   = COST_INFO.geothermal.costFactor;   // 0.60
+
+  if (prefs) {
+    if (prefs.batterySpeicher)     { solarCF += 0.10; }
+    if (prefs.hatSolaranlage)      { solarCF -= 0.20; windCF += 0.05; waterCF += 0.05; geoCF += 0.05; }
+    if (prefs.limitiertesBudget)   { solarCF += 0.10; windCF -= 0.05; waterCF -= 0.05; geoCF -= 0.05; }
+    if (prefs.grosszuegigesBudget) {
+      solarCF  = Math.min(solarCF  + 0.08, 1.0);
+      windCF   = Math.min(windCF   + 0.08, 1.0);
+      waterCF  = Math.min(waterCF  + 0.08, 1.0);
+      geoCF    = Math.min(geoCF    + 0.08, 1.0);
+    }
+    if (prefs.umweltbewusstsein)    { solarCF += 0.05; windCF += 0.05; waterCF += 0.05; geoCF += 0.05; }
+    if (prefs.hoherHeizbedarf)      { geoCF += 0.15; }
+    if (prefs.grossesGrundstueck)   { windCF += 0.05; waterCF += 0.05; }
+    if (prefs.kenntFoerderprogramme){ solarCF += 0.05; windCF += 0.05; waterCF += 0.05; geoCF += 0.05; }
+
+    // Clamp all to [0.05, 1.0]
+    solarCF = Math.min(Math.max(solarCF, 0.05), 1.0);
+    windCF  = Math.min(Math.max(windCF,  0.05), 1.0);
+    waterCF = Math.min(Math.max(waterCF, 0.05), 1.0);
+    geoCF   = Math.min(Math.max(geoCF,   0.05), 1.0);
+  }
+
+  // Cost-adjusted scores (raw × effective cost factor)
+  const solarAdj = Math.round(solar * solarCF);
+  const windAdj = Math.round(wind * windCF);
+  const waterAdj = Math.round(water * waterCF);
+  const geothermalAdj = Math.round(geothermal * geoCF);
 
   // Recommendation based on adjusted scores; solar wins ties
   let recommendation: EnergyType = "solar";
@@ -152,10 +181,10 @@ export function computeEnergyScore(
       },
     },
     costInfo: {
-      solar: COST_INFO.solar,
-      wind: COST_INFO.wind,
-      water: COST_INFO.water,
-      geothermal: COST_INFO.geothermal,
+      solar:      { ...COST_INFO.solar,      costFactor: solarCF },
+      wind:       { ...COST_INFO.wind,       costFactor: windCF  },
+      water:      { ...COST_INFO.water,      costFactor: waterCF },
+      geothermal: { ...COST_INFO.geothermal, costFactor: geoCF   },
     },
     rawData: data,
   };

@@ -24,6 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de" className="dark">
+      <head>
+        {/* Sync theme before first paint to prevent flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('wattwise-theme')==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <QueryProvider>{children}</QueryProvider>
       </body>

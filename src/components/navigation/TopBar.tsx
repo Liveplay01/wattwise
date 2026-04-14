@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Info, X, Zap, Droplets, ExternalLink } from "lucide-react";
+import { HelpCircle, Info, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
+import { useTheme } from "@/hooks/useTheme";
 
 function WattwiseLogo({ className }: { className?: string }) {
   return (
@@ -38,6 +39,7 @@ function SideDrawer({
 export default function TopBar() {
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <>
@@ -52,7 +54,7 @@ export default function TopBar() {
             </span>
           </div>
 
-          {/* Rechts: WDG Badge + Buttons */}
+          {/* Rechts: Buttons + WDG Badge */}
           <div className="pointer-events-auto flex items-center gap-2">
             <button
               onClick={() => setInfoOpen(true)}
@@ -61,6 +63,19 @@ export default function TopBar() {
             >
               <Info className="w-5 h-5" />
             </button>
+
+            {/* Light / Dark Mode Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
+              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+            >
+              {theme === "dark"
+                ? <Sun className="w-5 h-5" />
+                : <Moon className="w-5 h-5" />
+              }
+            </button>
+
             <button
               onClick={() => setTutorialOpen(true)}
               className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
@@ -107,12 +122,18 @@ export default function TopBar() {
             },
             {
               n: 3,
-              title: "Analyse lesen",
-              desc: "Wattwise berechnet Solar-, Wind-, Wasser- und Geothermiepotenzial für deinen Standort und gibt eine Empfehlung — inklusive Kosten und Aufwand.",
-              icon: "📊",
+              title: "Analyse anpassen (optional)",
+              desc: "Bevor die Analyse startet, kannst du Punkte aktivieren die auf dich zutreffen — z. B. ob du schon eine Solaranlage besitzt oder ein begrenztes Budget hast. Das beeinflusst die Gewichtung der Empfehlung.",
+              icon: "⚙️",
             },
             {
               n: 4,
+              title: "Analyse lesen",
+              desc: "Wattwise berechnet Solar-, Wind-, Wasser- und Geothermiepotenzial für deinen Standort. Hovere über den Score oder das Energie-Icon für eine Erklärung, was der Wert bedeutet.",
+              icon: "📊",
+            },
+            {
+              n: 5,
               title: "Angebote vergleichen",
               desc: "In den Ergebnissen findest du Links zu Vergleichsportalen und Anbietern, die passende Anlagen für dein Grundstück anbieten.",
               icon: "🔗",
@@ -123,7 +144,7 @@ export default function TopBar() {
                 <div className="w-8 h-8 rounded-full bg-primary/20 text-primary text-sm font-bold flex items-center justify-center flex-shrink-0">
                   {step.n}
                 </div>
-                {step.n < 4 && <div className="w-px flex-1 bg-border min-h-4" />}
+                {step.n < 5 && <div className="w-px flex-1 bg-border min-h-4" />}
               </div>
               <div className="pb-2">
                 <p className="font-semibold text-foreground text-sm mb-1">
@@ -133,6 +154,38 @@ export default function TopBar() {
               </div>
             </div>
           ))}
+
+          {/* Analyse-Anpassung */}
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="w-4 h-4 text-primary" />
+              <p className="text-xs font-semibold text-foreground">Analyse anpassen</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Beim ersten Standort-Klick öffnet sich ein Dialog, in dem du Punkte aktivieren kannst, die auf dich zutreffen:
+            </p>
+            <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+              <li>Batteriespeicher vorhanden → besserer Solar-ROI</li>
+              <li>Bereits Solaranlage → andere Quellen bevorzugt</li>
+              <li>Begrenztes oder großzügiges Budget</li>
+              <li>Hoher Heizbedarf → Geothermie aufgewertet</li>
+              <li>Großes Grundstück, Förderprogramme, Umweltfokus u. v. m.</li>
+            </ul>
+            <p className="text-[11px] text-muted-foreground/70">
+              Mit &bdquo;Nicht mehr anzeigen&ldquo; werden deine Einstellungen gespeichert und der Dialog erscheint nicht mehr.
+            </p>
+          </div>
+
+          {/* Light/Dark Mode */}
+          <div className="rounded-xl border border-border bg-secondary/30 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <Sun className="w-4 h-4 text-yellow-400" />
+              <p className="text-xs font-semibold text-foreground">Helles / Dunkles Design</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Mit dem Sonne/Mond-Button in der Kopfzeile kannst du jederzeit zwischen hellem und dunklem Design wechseln. Die Einstellung wird gespeichert.
+            </p>
+          </div>
 
           {/* Hinweise */}
           <div className="rounded-xl border border-border bg-secondary/30 p-4 space-y-2">
@@ -247,7 +300,7 @@ export default function TopBar() {
                 { label: "Solaranlage", weight: "100 %", color: "text-yellow-400", desc: "Günstigste Option" },
                 { label: "Windanlage", weight: "75 %", color: "text-blue-400", desc: "Hohe Kosten & Genehmigung" },
                 { label: "Wasserkraft", weight: "65 %", color: "text-cyan-400",   desc: "Sehr komplex & teuer" },
-              { label: "Geothermie",  weight: "60 %", color: "text-orange-400", desc: "Bohrung, Genehmigung" },
+                { label: "Geothermie",  weight: "60 %", color: "text-orange-400", desc: "Bohrung, Genehmigung" },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-xs">
                   <span className={`font-medium ${item.color}`}>{item.label}</span>
@@ -263,11 +316,44 @@ export default function TopBar() {
             </p>
           </div>
 
+          {/* Nutzer-Gewichtung */}
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="w-4 h-4 text-primary" />
+              <p className="font-semibold text-sm text-foreground">Persönliche Gewichtung</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Vor jeder Analyse kannst du Faktoren aktivieren, die deinen Kosten-Faktor verändern:
+            </p>
+            <div className="space-y-1">
+              {[
+                { icon: "🔋", label: "Batteriespeicher vorhanden", effect: "Solar +10 %" },
+                { icon: "☀️", label: "Bereits Solaranlage", effect: "Solar −20 %, andere +5 %" },
+                { icon: "💶", label: "Begrenztes Budget", effect: "Solar +10 %, andere −5 %" },
+                { icon: "💼", label: "Großzügiges Budget", effect: "Alle +8 %" },
+                { icon: "🌿", label: "Umweltbewusstsein", effect: "Alle +5 %" },
+                { icon: "🏠", label: "Hoher Heizbedarf", effect: "Geothermie +15 %" },
+                { icon: "🌳", label: "Großes Grundstück", effect: "Wind/Wasser +5 %" },
+                { icon: "📋", label: "Förderprogramme bekannt", effect: "Alle +5 %" },
+              ].map(item => (
+                <div key={item.label} className="flex items-center justify-between text-xs py-0.5">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <span>{item.icon}</span> {item.label}
+                  </span>
+                  <span className="font-mono text-[10px] text-primary/80">{item.effect}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-muted-foreground/70">
+              Die Faktoren verändern nur die Gewichtung, nicht die Rohdaten von den APIs.
+            </p>
+          </div>
+
           {/* Datenschutz */}
           <div className="rounded-xl border border-border bg-secondary/30 p-4">
             <p className="text-xs font-semibold text-foreground mb-1">🔒 Datenschutz</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Wattwise speichert keine Standortdaten. Alle API-Anfragen gehen direkt von deinem Browser an die jeweiligen Dienste. Es werden keine Cookies gesetzt und kein Tracking verwendet.
+              Wattwise speichert keine Standortdaten. Alle API-Anfragen gehen direkt von deinem Browser an die jeweiligen Dienste. Es werden keine Cookies gesetzt und kein Tracking verwendet. Deine Analyse-Einstellungen werden lokal im Browser gespeichert (localStorage).
             </p>
           </div>
 

@@ -77,3 +77,25 @@ export interface AnalyseRequest {
   lng: number;
   address?: string;
 }
+
+export interface UserPreferences {
+  batterySpeicher: boolean;        // Besitze Batteriespeicher
+  hatSolaranlage: boolean;         // Besitze bereits Solaranlage
+  limitiertesBudget: boolean;      // Begrenztes Budget (<10k€)
+  grosszuegigesBudget: boolean;    // Großzügiges Budget (>50k€)
+  umweltbewusstsein: boolean;      // Umweltbewusstsein maximieren
+  hoherHeizbedarf: boolean;        // Hoher Heizbedarf
+  grossesGrundstueck: boolean;     // Großes Grundstück (>500m²)
+  kenntFoerderprogramme: boolean;  // Kenne Förderprogramme
+}
+
+export const DEFAULT_PREFERENCES: UserPreferences = {
+  batterySpeicher: false,
+  hatSolaranlage: false,
+  limitiertesBudget: false,
+  grosszuegigesBudget: false,
+  umweltbewusstsein: false,
+  hoherHeizbedarf: false,
+  grossesGrundstueck: false,
+  kenntFoerderprogramme: false,
+};

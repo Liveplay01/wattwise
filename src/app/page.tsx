@@ -8,25 +8,62 @@ import AnalysisDrawer from "@/components/analysis/AnalysisDrawer";
 import DemoBanner from "@/components/DemoBanner";
 import HintOverlay from "@/components/HintOverlay";
 import TutorialOnboarding from "@/components/TutorialOnboarding";
+import PreferencesModal from "@/components/PreferencesModal";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
 import { useMapLocation } from "@/hooks/useMapLocation";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { isInGermany } from "@/lib/utils";
+import type { UserPreferences } from "@/lib/energy/types";
 
 export default function Home() {
   const { location, selectLocation } = useMapLocation();
+  const { preferences, setPreferences, skipForever, setSkipForever } = useUserPreferences();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
 
-  const { data, isLoading, error } = useEnergyAnalysis(location);
+  // Pending location — set before preferences modal, committed after
+  const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null);
+  const [prefsModalOpen, setPrefsModalOpen] = useState(false);
+
+  const { data, isLoading, error } = useEnergyAnalysis(location, preferences);
 
   const handleLocationSelect = useCallback(
     (lat: number, lng: number, address?: string) => {
-      const success = selectLocation(lat, lng, address);
-      if (success) {
-        setDrawerOpen(true);
+      if (!isInGermany(lat, lng)) return;
+      if (skipForever) {
+        // Skip modal, use persisted preferences directly
+        const success = selectLocation(lat, lng, address);
+        if (success) setDrawerOpen(true);
+      } else {
+        setPendingLocation({ lat, lng, address });
+        setPrefsModalOpen(true);
       }
     },
-    [selectLocation]
+    [skipForever, selectLocation]
   );
+
+  const handlePrefsConfirm = useCallback(
+    (prefs: UserPreferences, forever: boolean) => {
+      setPreferences(prefs);
+      if (forever) setSkipForever(true);
+      setPrefsModalOpen(false);
+      if (pendingLocation) {
+        const success = selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
+        if (success) setDrawerOpen(true);
+        setPendingLocation(null);
+      }
+    },
+    [pendingLocation, setPreferences, setSkipForever, selectLocation]
+  );
+
+  const handlePrefsSkip = useCallback(() => {
+    setPrefsModalOpen(false);
+    if (pendingLocation) {
+      const success = selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
+      if (success) setDrawerOpen(true);
+      setPendingLocation(null);
+    }
+  }, [pendingLocation, selectLocation]);
 
   const handleMapClick = useCallback(
     (lat: number, lng: number) => {
@@ -93,6 +130,14 @@ export default function Home() {
 
       {/* First-time user tutorial */}
       <TutorialOnboarding />
+
+      {/* Pre-analysis preferences modal */}
+      <PreferencesModal
+        open={prefsModalOpen}
+        initialPreferences={preferences}
+        onConfirm={handlePrefsConfirm}
+        onSkip={handlePrefsSkip}
+      />
 
       {/* Analysis Drawer */}
       <AnalysisDrawer
