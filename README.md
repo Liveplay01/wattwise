@@ -1,6 +1,6 @@
 # Wattwise ⚡
 
-> **Ein Schulprojekt der WDG Schule Wuppertal** | Demo-Anwendung
+> **Ein Schulprojekt des WDG Wuppertal** | Demo-Anwendung
 
 Wattwise ist eine Karten-App, die dir zeigt, ob du auf deinem Grundstück besser eine **Solaranlage ☀️**, ein **Windrad 🌬️** oder ein **Wasserrad 💧** bauen solltest — auf Basis echter, öffentlicher Daten.
 
@@ -23,20 +23,6 @@ Wattwise ist eine Karten-App, die dir zeigt, ob du auf deinem Grundstück besser
 - **TanStack Query** für Datenabruf
 - Deployment auf **Vercel**
 
-## Lokale Entwicklung
-
-```bash
-npm install
-npm run dev
-```
-
-Öffne [http://localhost:3000](http://localhost:3000).
-
-## Deployment
-
-Das Projekt ist auf Vercel deployed. Jeder Push auf `main` löst automatisch ein neues Deployment aus.
-
-## Disclaimer
 
 Dies ist eine Demo-Anwendung im Rahmen eines Schulprojekts. Alle Empfehlungen dienen nur zu Informationszwecken und sind kein Ersatz für eine professionelle Energieberatung.
 
