@@ -7,6 +7,7 @@ import AddressSearch from "@/components/search/AddressSearch";
 import AnalysisDrawer from "@/components/analysis/AnalysisDrawer";
 import DemoBanner from "@/components/DemoBanner";
 import HintOverlay from "@/components/HintOverlay";
+import TutorialOnboarding from "@/components/TutorialOnboarding";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
 import { useMapLocation } from "@/hooks/useMapLocation";
 
@@ -89,6 +90,9 @@ export default function Home() {
           Ein Schulprojekt des Wilhelm-Dörpfeld-Gymnasiums Wuppertal
         </p>
       </div>
+
+      {/* First-time user tutorial */}
+      <TutorialOnboarding />
 
       {/* Analysis Drawer */}
       <AnalysisDrawer
