@@ -16,7 +16,7 @@ export default function AnalysisSkeleton() {
       </div>
 
       {/* Score cards skeleton */}
-      {["solar", "wind", "water"].map((type) => (
+      {["solar", "wind", "water", "geothermal"].map((type) => (
         <div
           key={type}
           className="rounded-lg border border-border bg-card p-4"

@@ -18,7 +18,7 @@ async function fetchOpenMeteoForecast(lat: number, lng: number) {
   const params = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lng.toString(),
-    daily: "shortwave_radiation_sum,wind_speed_10m_max",
+    daily: "shortwave_radiation_sum,wind_speed_10m_max,temperature_2m_mean",
     timezone: "Europe/Berlin",
     start_date: fmt(start),
     end_date: fmt(end),
@@ -97,12 +97,20 @@ export async function analyseLocation(
       ? validWind.reduce((a: number, b: number) => a + b, 0) / validWind.length
       : 5.0;
 
+  const tempValues: number[] = forecast.daily?.temperature_2m_mean ?? [];
+  const validTemp = tempValues.filter((v: number) => v != null);
+  const avgTemp =
+    validTemp.length > 0
+      ? validTemp.reduce((a: number, b: number) => a + b, 0) / validTemp.length
+      : 9.5; // German mean as fallback
+
   return computeEnergyScore(
     {
       solarRadiation: avgRadiationKwh,
       windSpeed: avgWind,
       elevation,
       waterwayCount,
+      meanTemperature: avgTemp,
     },
     lat,
     lng,

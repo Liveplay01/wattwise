@@ -7,6 +7,8 @@ import {
   getWindClass,
   getWaterProximity,
   getWaterPotential,
+  getGeothermalDepthClass,
+  getGeothermalPotential,
 } from "./constants";
 
 interface RawApiData {
@@ -14,6 +16,7 @@ interface RawApiData {
   windSpeed: number;        // max wind speed m/s from Open-Meteo
   elevation: number;        // meters above sea level
   waterwayCount: number;    // number of waterways within 2km
+  meanTemperature: number;  // mean 2m air temperature °C from Open-Meteo
 }
 
 export function computeSolarScore(radiation: number): number {
@@ -33,11 +36,27 @@ export function computeWaterScore(waterwayCount: number, elevation: number): num
   return Math.round(clamp(score, waterwayCount === 0 ? 5 : 8, 95));
 }
 
+export function computeGeothermalScore(meanTemperature: number, elevation: number): number {
+  // Temperature component: 6°C → 5 pts, 13°C → 70 pts
+  const tempScore = clamp(((meanTemperature - 6.0) / (13.0 - 6.0)) * 70, 5, 70);
+  // Elevation bonus: lower elevation = cheaper drilling + warmer shallow ground
+  const elevBonus = elevation < 200 ? 30 : elevation < 500 ? 20 : elevation < 800 ? 12 : 5;
+  return Math.round(clamp(tempScore + elevBonus, 5, 95));
+}
+
+function getBoreholeDepthEstimate(elevation: number): string {
+  if (elevation < 200) return "ca. 80–120 m";
+  if (elevation < 500) return "ca. 100–150 m";
+  if (elevation < 800) return "ca. 130–180 m";
+  return "ca. 160–220 m";
+}
+
 function buildReasoning(
   recommendation: EnergyType,
   solarAdj: number,
   windAdj: number,
   waterAdj: number,
+  geothermalAdj: number,
   data: RawApiData
 ): string {
   switch (recommendation) {
@@ -53,6 +72,14 @@ function buildReasoning(
       }`;
     case "water":
       return `Mit ${data.waterwayCount} Gewässer${data.waterwayCount !== 1 ? "n" : ""} im Umkreis und ${Math.round(data.elevation)} m Höhenlage erreicht Wasserkraft hier einen gewichteten Score von ${waterAdj}/100. Trotz komplexer Genehmigungslage hat dein Standort das höchste Wasserkraftpotenzial.`;
+    case "geothermal":
+      return `Mit einer geschätzten Grundtemperatur von ${(data.meanTemperature + 0.5).toFixed(1)}°C und ${Math.round(data.elevation)} m Höhenlage erreicht Geothermie hier einen gewichteten Score von ${geothermalAdj}/100. ${
+        data.elevation < 200
+          ? "Die flache Lage ermöglicht günstige Bohrbedingungen."
+          : data.elevation < 500
+          ? "Die Höhenlage erfordert etwas tiefere Bohrungen."
+          : "Die Höhenlage macht Bohrungen aufwendiger — trotzdem sinnvoll bei ausreichend Wärme."
+      } Eine Erdwärmesonde ist ganzjährig nutzbar und unabhängig von Wetter und Jahreszeit.`;
   }
 }
 
@@ -66,30 +93,36 @@ export function computeEnergyScore(
   const solar = computeSolarScore(data.solarRadiation);
   const wind = computeWindScore(data.windSpeed);
   const water = computeWaterScore(data.waterwayCount, data.elevation);
+  const geothermal = computeGeothermalScore(data.meanTemperature, data.elevation);
 
   // Cost-adjusted scores (raw × cost factor)
   const solarAdj = Math.round(solar * COST_INFO.solar.costFactor);
   const windAdj = Math.round(wind * COST_INFO.wind.costFactor);
   const waterAdj = Math.round(water * COST_INFO.water.costFactor);
+  const geothermalAdj = Math.round(geothermal * COST_INFO.geothermal.costFactor);
 
   // Recommendation based on adjusted scores; solar wins ties
   let recommendation: EnergyType = "solar";
   let maxAdj = solarAdj;
-  if (windAdj > maxAdj + 5) { recommendation = "wind"; maxAdj = windAdj; }
-  if (waterAdj > maxAdj + 5) { recommendation = "water"; }
+  if (windAdj > maxAdj + 5)       { recommendation = "wind";       maxAdj = windAdj; }
+  if (waterAdj > maxAdj + 5)      { recommendation = "water";      maxAdj = waterAdj; }
+  if (geothermalAdj > maxAdj + 5) { recommendation = "geothermal"; }
 
   const jahresertrag = Math.round(data.solarRadiation * 365 * 0.18);
+  const groundTemp = data.meanTemperature + 0.5;
 
   return {
     solar,
     wind,
     water,
+    geothermal,
     solarAdjusted: solarAdj,
     windAdjusted: windAdj,
     waterAdjusted: waterAdj,
+    geothermalAdjusted: geothermalAdj,
     recommendation,
     recommendationLabel: ENERGY_LABELS[recommendation],
-    reasoning: buildReasoning(recommendation, solarAdj, windAdj, waterAdj, data),
+    reasoning: buildReasoning(recommendation, solarAdj, windAdj, waterAdj, geothermalAdj, data),
     lat,
     lng,
     address,
@@ -110,11 +143,19 @@ export function computeEnergyScore(
         hoehenlage: `${Math.round(data.elevation)} m ü. NN`,
         potenzialklasse: getWaterPotential(water),
       },
+      geothermal: {
+        grundtemperatur: `${groundTemp.toFixed(1)}°C (geschätzt)`,
+        tiefenklasse: getGeothermalDepthClass(data.elevation),
+        bohrtiefenschaetzung: getBoreholeDepthEstimate(data.elevation),
+        potenzialklasse: getGeothermalPotential(geothermal),
+        systemtyp: "Erdwärmesonde (EWS)",
+      },
     },
     costInfo: {
       solar: COST_INFO.solar,
       wind: COST_INFO.wind,
       water: COST_INFO.water,
+      geothermal: COST_INFO.geothermal,
     },
     rawData: data,
   };

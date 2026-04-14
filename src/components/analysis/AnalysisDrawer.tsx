@@ -103,6 +103,13 @@ export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, er
                     isRecommended={data.recommendation === "water"}
                     costInfo={data.costInfo.water}
                   />
+                  <EnergyScoreCard
+                    type="geothermal"
+                    score={data.geothermal}
+                    adjustedScore={data.geothermalAdjusted}
+                    isRecommended={data.recommendation === "geothermal"}
+                    costInfo={data.costInfo.geothermal}
+                  />
                 </div>
               </div>
 
@@ -143,11 +150,25 @@ export default function AnalysisDrawer({ open, onOpenChange, isLoading, data, er
                 </div>
               </div>
 
+              {/* Geothermal metrics */}
+              <div className="rounded-lg border border-border bg-card p-4">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                  🌡️ Geothermie-Details
+                </p>
+                <div className="divide-y divide-border/50">
+                  <MetricRow label="Geschätzte Grundtemperatur" value={data.metrics.geothermal.grundtemperatur} />
+                  <MetricRow label="Standortklasse" value={data.metrics.geothermal.tiefenklasse} />
+                  <MetricRow label="Bohrtiefe (Schätzung)" value={data.metrics.geothermal.bohrtiefenschaetzung} />
+                  <MetricRow label="Systemtyp" value={data.metrics.geothermal.systemtyp} />
+                  <MetricRow label="Potenzialklasse" value={data.metrics.geothermal.potenzialklasse} highlight />
+                </div>
+              </div>
+
               {/* Abbreviation legend */}
               <AbbreviationLegend />
 
               <p className="text-[11px] text-muted-foreground/60 text-center pb-2">
-                Daten: Open-Meteo API · OpenStreetMap Overpass API · Keine Gewähr
+                Daten: Open-Meteo API · OpenStreetMap Overpass API · Geothermie: Proxy-Modell · Keine Gewähr
               </p>
             </div>
           )}

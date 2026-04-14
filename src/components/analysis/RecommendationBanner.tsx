@@ -1,4 +1,4 @@
-import { Sun, Wind, Droplets } from "lucide-react";
+import { Sun, Wind, Droplets, Thermometer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { EnergyType } from "@/lib/energy/types";
 
@@ -6,24 +6,28 @@ const ICONS = {
   solar: Sun,
   wind: Wind,
   water: Droplets,
+  geothermal: Thermometer,
 };
 
 const GRADIENTS = {
   solar: "from-yellow-400/10 via-yellow-400/5 to-transparent",
   wind: "from-blue-400/10 via-blue-400/5 to-transparent",
   water: "from-cyan-400/10 via-cyan-400/5 to-transparent",
+  geothermal: "from-orange-400/10 via-orange-400/5 to-transparent",
 };
 
 const ICON_COLORS = {
   solar: "text-yellow-400",
   wind: "text-blue-400",
   water: "text-cyan-400",
+  geothermal: "text-orange-400",
 };
 
 const ICON_BG = {
   solar: "bg-yellow-400/15",
   wind: "bg-blue-400/15",
   water: "bg-cyan-400/15",
+  geothermal: "bg-orange-400/15",
 };
 
 interface RecommendationBannerProps {

@@ -180,6 +180,11 @@
   58%, 82% { width: 28%; }
   92%, 100%{ width: 0%;  }
 }
+@keyframes tutorial-bar-4 {
+  0%,  36% { width: 0%;  }
+  66%, 82% { width: 47%; }
+  92%, 100%{ width: 0%;  }
+}
 @keyframes tutorial-recommend {
   0%,  62% { opacity: 0; transform: translateY(10px); }
   74%, 82% { opacity: 1; transform: translateY(0);    }

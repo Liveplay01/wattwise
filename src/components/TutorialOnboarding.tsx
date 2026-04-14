@@ -32,6 +32,7 @@ function WelcomeIllustration() {
     { icon: "💨", size: 22, top: "14px",  right: "14px", delay: "0.8s" },
     { icon: "💧", size: 20, bottom:"8px", left: "22px",  delay: "1.5s" },
     { icon: "⚡", size: 18, bottom:"14px",right: "20px", delay: "2.2s" },
+    { icon: "🌡️", size: 17, top:"36px",  left: "38px",  delay: "2.8s" },
   ] as const;
 
   return (
@@ -285,11 +286,12 @@ function AnalysisIllustration() {
     { icon: "☀️", label: "Solar",  color: "#facc15", anim: "tutorial-bar-1", score: "82" },
     { icon: "💨", label: "Wind",   color: "#60a5fa", anim: "tutorial-bar-2", score: "54" },
     { icon: "💧", label: "Wasser", color: "#22d3ee", anim: "tutorial-bar-3", score: "28" },
+    { icon: "🌡️", label: "Geo",   color: "#fb923c", anim: "tutorial-bar-4", score: "47" },
   ];
 
   return (
     <div
-      className="relative h-44 flex flex-col justify-center px-3 gap-3"
+      className="relative h-52 flex flex-col justify-center px-3 gap-2"
       style={{ animation: "tutorial-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both" }}
     >
       {bars.map((bar) => (
@@ -402,7 +404,7 @@ const STEPS = [
     label: "Schritt 3 von 3",
     title: "Analyse & Empfehlung lesen",
     subtitle:
-      "Wattwise berechnet Solar-, Wind- und Wasserpotenzial für deinen Standort und gibt eine Empfehlung inklusive Kosten und Aufwand.",
+      "Wattwise berechnet Solar-, Wind-, Wasser- und Geothermiepotenzial für deinen Standort und gibt eine Empfehlung inklusive Kosten und Aufwand.",
     illustration: AnalysisIllustration,
   },
   {

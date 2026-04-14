@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Sun, Wind, Droplets, ChevronDown, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Sun, Wind, Droplets, Thermometer, ChevronDown, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getScoreLabel, ENERGY_INFO, ENERGY_LINKS } from "@/lib/energy/constants";
 import type { CostInfo, EnergyType } from "@/lib/energy/types";
 import { Abbr, ABBR } from "@/components/ui/abbr";
 
-const ICONS = { solar: Sun, wind: Wind, water: Droplets };
-const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft" };
-const COLORS = { solar: "text-yellow-400", wind: "text-blue-400", water: "text-cyan-400" };
-const BG_COLORS = { solar: "bg-yellow-400/10", wind: "bg-blue-400/10", water: "bg-cyan-400/10" };
-const BAR_COLORS = { solar: "bg-yellow-400", wind: "bg-blue-400", water: "bg-cyan-400" };
-const BORDER_COLORS = { solar: "border-yellow-400/20", wind: "border-blue-400/20", water: "border-cyan-400/20" };
+const ICONS = { solar: Sun, wind: Wind, water: Droplets, geothermal: Thermometer };
+const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft", geothermal: "Geothermie" };
+const COLORS = { solar: "text-yellow-400", wind: "text-blue-400", water: "text-cyan-400", geothermal: "text-orange-400" };
+const BG_COLORS = { solar: "bg-yellow-400/10", wind: "bg-blue-400/10", water: "bg-cyan-400/10", geothermal: "bg-orange-400/10" };
+const BAR_COLORS = { solar: "bg-yellow-400", wind: "bg-blue-400", water: "bg-cyan-400", geothermal: "bg-orange-400" };
+const BORDER_COLORS = { solar: "border-yellow-400/20", wind: "border-blue-400/20", water: "border-cyan-400/20", geothermal: "border-orange-400/20" };
 
 const DIFFICULTY_COLORS = {
   "Einfach": "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",

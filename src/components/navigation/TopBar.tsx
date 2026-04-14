@@ -108,7 +108,7 @@ export default function TopBar() {
             {
               n: 3,
               title: "Analyse lesen",
-              desc: "Wattwise berechnet Solar-, Wind- und Wasserpotenzial für deinen Standort und gibt eine Empfehlung — inklusive Kosten und Aufwand.",
+              desc: "Wattwise berechnet Solar-, Wind-, Wasser- und Geothermiepotenzial für deinen Standort und gibt eine Empfehlung — inklusive Kosten und Aufwand.",
               icon: "📊",
             },
             {
@@ -203,6 +203,22 @@ export default function TopBar() {
             </p>
           </div>
 
+          {/* Geothermie Proxy */}
+          <div className="rounded-xl border border-border bg-card p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🌡️</span>
+              <div>
+                <p className="font-semibold text-sm text-foreground">Geothermie-Proxy (Open-Meteo)</p>
+                <p className="text-[10px] text-muted-foreground">Temperaturbasiertes Schätzmodell</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Da keine browserkompatible Geothermie-API für Deutschland existiert, schätzt Wattwise die
+              Grundtemperatur aus der mittleren Lufttemperatur (Open-Meteo, 2 m-Höhe) und korrigiert nach
+              Höhenlage. Das Modell ist ein Proxy und kein Ersatz für eine geologische Untersuchung.
+            </p>
+          </div>
+
           {/* Nominatim */}
           <div className="rounded-xl border border-border bg-card p-4 space-y-2">
             <div className="flex items-center gap-2">
@@ -230,7 +246,8 @@ export default function TopBar() {
               {[
                 { label: "Solaranlage", weight: "100 %", color: "text-yellow-400", desc: "Günstigste Option" },
                 { label: "Windanlage", weight: "75 %", color: "text-blue-400", desc: "Hohe Kosten & Genehmigung" },
-                { label: "Wasserkraft", weight: "65 %", color: "text-cyan-400", desc: "Sehr komplex & teuer" },
+                { label: "Wasserkraft", weight: "65 %", color: "text-cyan-400",   desc: "Sehr komplex & teuer" },
+              { label: "Geothermie",  weight: "60 %", color: "text-orange-400", desc: "Bohrung, Genehmigung" },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between text-xs">
                   <span className={`font-medium ${item.color}`}>{item.label}</span>
@@ -242,7 +259,7 @@ export default function TopBar() {
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground/70">
-              Wind/Wasser müssen Solar deutlich überbieten, um empfohlen zu werden — da Solar für Privatpersonen in den meisten Fällen die praktikabelste Wahl ist.
+              Wind, Wasser und Geothermie müssen Solar deutlich überbieten, um empfohlen zu werden — da Solar für Privatpersonen in den meisten Fällen die praktikabelste Wahl ist.
             </p>
           </div>
 

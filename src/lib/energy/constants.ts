@@ -4,12 +4,14 @@ export const ENERGY_LABELS: Record<EnergyType, string> = {
   solar: "Solaranlage",
   wind: "Windanlage",
   water: "Wasserkraft",
+  geothermal: "Geothermie",
 };
 
 export const ENERGY_EMOJIS: Record<EnergyType, string> = {
   solar: "☀️",
   wind: "🌬️",
   water: "💧",
+  geothermal: "🌡️",
 };
 
 export const SCORE_LABELS = {
@@ -55,6 +57,28 @@ export function getWaterPotential(score: number): string {
   return "Sehr gut";
 }
 
+export function getGeothermalClass(temperature: number): string {
+  if (temperature < 7)  return "Ungünstig";
+  if (temperature < 9)  return "Ausreichend";
+  if (temperature < 11) return "Gut";
+  return "Sehr gut";
+}
+
+export function getGeothermalDepthClass(elevation: number): string {
+  if (elevation < 200) return "Flachland (< 100 m Bohrung typisch)";
+  if (elevation < 500) return "Hügelland (100–150 m Bohrung)";
+  if (elevation < 800) return "Mittelgebirge (150–200 m Bohrung)";
+  return "Hochlage (> 200 m Bohrung, Fels)";
+}
+
+export function getGeothermalPotential(score: number): string {
+  if (score < 25) return "Gering";
+  if (score < 45) return "Mittel";
+  if (score < 65) return "Gut";
+  if (score < 80) return "Sehr gut";
+  return "Ausgezeichnet";
+}
+
 // Cost and effort info per energy type (typical German single-family home)
 export const COST_INFO: Record<EnergyType, CostInfo> = {
   solar: {
@@ -81,6 +105,14 @@ export const COST_INFO: Record<EnergyType, CostInfo> = {
     permitRequired: true,
     costFactor: 0.65,
   },
+  geothermal: {
+    minEur: 15000,
+    maxEur: 40000,
+    paybackYears: "12–18 Jahre",
+    difficulty: "Sehr komplex",
+    permitRequired: true,
+    costFactor: 0.60,
+  },
 };
 
 // Curated links per energy type
@@ -100,6 +132,12 @@ export const ENERGY_LINKS: Record<EnergyType, { label: string; url: string; desc
     { label: "Kleinwasserkraft Deutschland", url: "https://www.kleinwasserkraft.de", desc: "Verband & Technikinfos" },
     { label: "Energie-Experten", url: "https://www.energie-experten.org/erneuerbare-energien/wasserkraft", desc: "Ratgeber Wasserkraft" },
     { label: "BMWK – Wasserkraft", url: "https://www.erneuerbare-energien.de/EE/Redaktion/DE/Dossier/wasserkraft.html", desc: "Offizielle Infos Bundesministerium" },
+  ],
+  geothermal: [
+    { label: "Bundesverband Geothermie", url: "https://www.geothermie.de", desc: "Branchenverband & Infos" },
+    { label: "Verbraucherzentrale – Wärmepumpe", url: "https://www.verbraucherzentrale.de/wissen/energie/heizen-und-warmwasser/erdwaermepumpe-was-sie-wissen-muessen-12362", desc: "Unabhängige Beratung" },
+    { label: "Energie-Experten – Geothermie", url: "https://www.energie-experten.org/erneuerbare-energien/geothermie", desc: "Ratgeber oberflächennahe Geothermie" },
+    { label: "BMWK – Geothermie", url: "https://www.erneuerbare-energien.de/EE/Redaktion/DE/Dossier/geothermie.html", desc: "Offizielle Infos Bundesministerium" },
   ],
 };
 
@@ -146,5 +184,21 @@ export const ENERGY_INFO: Record<EnergyType, { pros: string[]; cons: string[]; s
       "Ökologische Auflagen (Fischwanderhilfen etc.)",
     ],
     suitable: "Nur realistisch bei eigenem Bach/Fluss mit ausreichendem Gefälle.",
+  },
+  geothermal: {
+    pros: [
+      "Ganzjährig verfügbar, völlig wetterunabhängig",
+      "Sehr niedrige Betriebskosten nach Amortisation",
+      "Kann gleichzeitig heizen und kühlen (reversibel)",
+      "Lange Lebensdauer der Bohrung (50+ Jahre)",
+    ],
+    cons: [
+      "Hohe Installations- und Bohrkosten",
+      "Wasserrechtliche Genehmigung erforderlich",
+      "Nicht möglich in Wasserschutzgebieten",
+      "Abhängig von Bodenbeschaffenheit und Geologie",
+      "Erzeugt Wärme, keinen Strom (Wärmepumpe nötig)",
+    ],
+    suitable: "Sinnvoll als Heizsystem mit Wärmepumpe, wenn Solar nicht möglich ist oder als Ergänzung. Benötigt ausreichend Platz für die Bohranlage.",
   },
 };
