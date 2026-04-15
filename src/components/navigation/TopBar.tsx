@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Info, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
+import { HelpCircle, Info, MessageSquare, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
+import FeedbackListDrawer from "@/components/FeedbackListDrawer";
 
 function WattwiseLogo({ className }: { className?: string }) {
   return (
@@ -44,6 +45,7 @@ interface TopBarProps {
 export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBarProps) {
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [feedbackListOpen, setFeedbackListOpen] = useState(false);
 
   return (
     <>
@@ -60,6 +62,14 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
 
           {/* Rechts: Buttons + WDG Badge */}
           <div className="pointer-events-auto flex items-center gap-2">
+            <button
+              onClick={() => setFeedbackListOpen(true)}
+              className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
+              aria-label="Community-Feedback anzeigen"
+            >
+              <MessageSquare className="w-5 h-5" />
+            </button>
+
             <button
               onClick={() => setInfoOpen(true)}
               className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
@@ -103,6 +113,9 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
           </div>
         </div>
       </header>
+
+      {/* ── Feedback List Drawer ────────────────────────────────── */}
+      <FeedbackListDrawer open={feedbackListOpen} onOpenChange={setFeedbackListOpen} />
 
       {/* ── Tutorial Drawer ─────────────────────────────────────── */}
       <SideDrawer open={tutorialOpen} onOpenChange={setTutorialOpen}>

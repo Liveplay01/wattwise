@@ -9,6 +9,7 @@ import DemoBanner from "@/components/DemoBanner";
 import HintOverlay from "@/components/HintOverlay";
 import TutorialOnboarding from "@/components/TutorialOnboarding";
 import PreferencesModal from "@/components/PreferencesModal";
+import FeedbackBanner from "@/components/FeedbackBanner";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -141,6 +142,9 @@ export default function Home() {
 
       {/* First-time user tutorial */}
       <TutorialOnboarding />
+
+      {/* Feedback banner (bottom-right) */}
+      <FeedbackBanner />
 
       {/* Pre-analysis preferences modal */}
       <PreferencesModal
