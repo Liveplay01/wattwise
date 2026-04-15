@@ -6,7 +6,7 @@ import FeedbackModal from "@/components/FeedbackModal";
 
 const DISMISSED_KEY = "wattwise-feedback-dismissed";
 
-export default function FeedbackBanner() {
+export default function FeedbackBanner({ drawerOpen = false }: { drawerOpen?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -22,7 +22,7 @@ export default function FeedbackBanner() {
     localStorage.setItem(DISMISSED_KEY, "1");
   }
 
-  if (!visible) return null;
+  if (!visible || drawerOpen) return null;
 
   return (
     <>

@@ -144,7 +144,7 @@ export default function Home() {
       <TutorialOnboarding />
 
       {/* Feedback banner (bottom-right) */}
-      <FeedbackBanner />
+      <FeedbackBanner drawerOpen={drawerOpen} />
 
       {/* Pre-analysis preferences modal */}
       <PreferencesModal

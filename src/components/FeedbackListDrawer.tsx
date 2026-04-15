@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import { X, ThumbsUp, ThumbsDown, MessageSquare } from "lucide-react";
+import { X, ThumbsUp, ThumbsDown, MessageSquare, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase, type Feedback, type LocalVotes, getLocalVotes, setLocalVotes } from "@/lib/supabase";
+import FeedbackModal from "@/components/FeedbackModal";
 
 interface FeedbackListDrawerProps {
   open: boolean;
@@ -18,6 +19,7 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
   const [loading, setLoading] = useState(false);
   const [localVotes, setLocalVotesState] = useState<LocalVotes>({});
   const [votingId, setVotingId] = useState<string | null>(null);
+  const [writeOpen, setWriteOpen] = useState(false);
 
   const fetchFeedbacks = useCallback(async () => {
     setLoading(true);
@@ -113,6 +115,7 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
   }
 
   return (
+    <>
     <DrawerPrimitive.Root direction="right" open={open} onOpenChange={onOpenChange}>
       <DrawerPrimitive.Portal>
         <DrawerPrimitive.Overlay className="fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm" />
@@ -125,13 +128,23 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
               </div>
               <span className="font-bold text-foreground">Community-Feedback</span>
             </div>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg"
-              aria-label="Schließen"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setWriteOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
+                aria-label="Feedback schreiben"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Schreiben
+              </button>
+              <button
+                onClick={() => onOpenChange(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg"
+                aria-label="Schließen"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Content */}
@@ -208,5 +221,14 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
         </DrawerPrimitive.Content>
       </DrawerPrimitive.Portal>
     </DrawerPrimitive.Root>
+
+    <FeedbackModal
+      open={writeOpen}
+      onClose={() => {
+        setWriteOpen(false);
+        if (open) fetchFeedbacks();
+      }}
+    />
+    </>
   );
 }
