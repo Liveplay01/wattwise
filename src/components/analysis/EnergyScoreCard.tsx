@@ -14,7 +14,6 @@ const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft",
 const COLORS = { solar: "text-yellow-400", wind: "text-blue-400", water: "text-cyan-400", geothermal: "text-orange-400" };
 const BG_COLORS = { solar: "bg-yellow-400/10", wind: "bg-blue-400/10", water: "bg-cyan-400/10", geothermal: "bg-orange-400/10" };
 const BAR_COLORS = { solar: "bg-yellow-400", wind: "bg-blue-400", water: "bg-cyan-400", geothermal: "bg-orange-400" };
-const BORDER_COLORS = { solar: "border-yellow-400/20", wind: "border-blue-400/20", water: "border-cyan-400/20", geothermal: "border-orange-400/20" };
 
 const GLOW_COLORS: Record<EnergyType, string[]> = {
   solar:      ['#facc15', '#fb923c', '#fde68a'],
