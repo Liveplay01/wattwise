@@ -18,6 +18,7 @@ interface SplashCursorProps {
   TRANSPARENT?: boolean;
   RAINBOW_MODE?: boolean;
   COLOR?: string;
+  COLORS?: string[];
 }
 
 function SplashCursor({
@@ -37,6 +38,7 @@ function SplashCursor({
   TRANSPARENT = true,
   RAINBOW_MODE = true,
   COLOR = '#ff0000',
+  COLORS,
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number | null>(null);
@@ -102,7 +104,9 @@ function SplashCursor({
       TRANSPARENT,
       RAINBOW_MODE,
       COLOR,
+      COLORS,
     };
+    let colorIndex = 0;
 
     const pointers: Pointer[] = [new (pointerPrototype as unknown as new () => Pointer)()];
 
@@ -862,19 +866,24 @@ function SplashCursor({
       return delta;
     }
 
-    function hexToRGB(hex: string) {
+    function hexToRGB(hex: string, intensity = 0.1) {
       let val = hex.replace('#', '');
       if (val.length === 3) val = val[0] + val[0] + val[1] + val[1] + val[2] + val[2];
       const r = parseInt(val.slice(0, 2), 16) / 255;
       const g = parseInt(val.slice(2, 4), 16) / 255;
       const b = parseInt(val.slice(4, 6), 16) / 255;
-      return { r: r * 0.15, g: g * 0.15, b: b * 0.15 };
+      return { r: r * intensity, g: g * intensity, b: b * intensity };
     }
 
     function generateColor() {
-      if (!config.RAINBOW_MODE) return hexToRGB(config.COLOR);
+      if (config.COLORS && config.COLORS.length > 0) {
+        const hex = config.COLORS[colorIndex % config.COLORS.length];
+        colorIndex++;
+        return hexToRGB(hex, 0.1);
+      }
+      if (!config.RAINBOW_MODE) return hexToRGB(config.COLOR, 0.1);
       const c = HSVtoRGB(Math.random(), 1.0, 1.0);
-      c.r *= 0.15; c.g *= 0.15; c.b *= 0.15;
+      c.r *= 0.1; c.g *= 0.1; c.b *= 0.1;
       return c;
     }
 
@@ -993,7 +1002,7 @@ function SplashCursor({
   }, []);
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 50, pointerEvents: 'none', width: '100%', height: '100%' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 900, pointerEvents: 'none', width: '100%', height: '100%' }}>
       <canvas ref={canvasRef} id="fluid" style={{ width: '100vw', height: '100vh', display: 'block' }} />
     </div>
   );

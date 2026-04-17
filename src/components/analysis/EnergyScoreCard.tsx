@@ -130,16 +130,14 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
 
       {/* Accordion for Details & Anbieter */}
       <Accordion type="single" collapsible>
-        <AccordionItem value="details" className={cn("border-t", BORDER_COLORS[type])}>
+        <AccordionItem value="details" className="border-t border-border/40">
           <AccordionTrigger
-            className={cn(
-              "px-4 py-2 text-xs text-muted-foreground hover:text-foreground hover:no-underline [&>svg]:w-4 [&>svg]:h-4"
-            )}
+            className="px-4 py-2 text-xs text-muted-foreground hover:text-foreground hover:no-underline hover:bg-muted/30 transition-colors [&>svg]:w-4 [&>svg]:h-4"
           >
             Details & Anbieter
           </AccordionTrigger>
           <AccordionContent>
-            <div className="px-4 pb-4 space-y-3 border-t border-border/50">
+            <div className="px-4 pb-4 space-y-3">
               {/* Pros */}
               <div className="pt-3">
                 <p className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-1.5">Vorteile</p>

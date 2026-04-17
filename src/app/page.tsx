@@ -100,7 +100,12 @@ export default function Home() {
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-background">
       {/* Fluid cursor effect */}
-      <SplashCursor />
+      <SplashCursor
+        COLORS={['#22d3ee', '#4ade80', '#facc15']}
+        DENSITY_DISSIPATION={5}
+        SPLAT_RADIUS={0.15}
+        SPLAT_FORCE={4000}
+      />
 
       {/* Full-screen map */}
       <div className="absolute inset-0">
