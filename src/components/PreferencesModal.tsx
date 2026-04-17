@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { X, SlidersHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserPreferences } from "@/lib/energy/types";
+import { Switch } from "@/components/ui/switch";
 
 interface PreferenceItem {
   key: keyof UserPreferences;
@@ -143,8 +144,9 @@ export default function PreferencesModal({
               (item.key === "grosszuegigesBudget" && localPrefs.limitiertesBudget);
 
             return (
-              <label
+              <div
                 key={item.key}
+                onClick={() => !isMutedOut && handleToggle(item.key, !checked)}
                 className={cn(
                   "flex items-start gap-3 rounded-xl border px-3 py-2.5 cursor-pointer transition-all duration-150",
                   checked
@@ -153,11 +155,11 @@ export default function PreferencesModal({
                   isMutedOut && "opacity-40 pointer-events-none"
                 )}
               >
-                <input
-                  type="checkbox"
+                <Switch
                   checked={checked}
-                  onChange={(e) => handleToggle(item.key, e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded accent-primary flex-shrink-0"
+                  onCheckedChange={(v) => handleToggle(item.key, v)}
+                  className="mt-0.5 flex-shrink-0"
+                  onClick={(e) => e.stopPropagation()}
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
@@ -168,23 +170,22 @@ export default function PreferencesModal({
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">{item.desc}</p>
                 </div>
-              </label>
+              </div>
             );
           })}
         </div>
 
         {/* Footer */}
         <div className="border-t border-border px-5 py-4 flex-shrink-0 space-y-3">
-          {/* "Don't show again" checkbox */}
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
+          {/* "Don't show again" toggle */}
+          <div className="flex items-center gap-2 cursor-pointer select-none" onClick={() => setNichtMehrAnzeigen(!nichtMehrAnzeigen)}>
+            <Switch
               checked={nichtMehrAnzeigen}
-              onChange={(e) => setNichtMehrAnzeigen(e.target.checked)}
-              className="w-4 h-4 rounded accent-primary"
+              onCheckedChange={setNichtMehrAnzeigen}
+              onClick={(e) => e.stopPropagation()}
             />
             <span className="text-xs text-muted-foreground">Nicht mehr anzeigen</span>
-          </label>
+          </div>
 
           {/* Buttons */}
           <div className="flex items-center gap-2">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { HelpCircle, Info, MessageSquare, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import FeedbackListDrawer from "@/components/FeedbackListDrawer";
+import GradientText from "@/components/ui/GradientText";
 
 function WattwiseLogo({ className }: { className?: string }) {
   return (
@@ -54,7 +55,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
           {/* Logo */}
           <div className="pointer-events-auto flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 border border-border/60 shadow-lg">
             <WattwiseLogo className="w-7 h-7" />
-            <span className="text-sm font-bold text-foreground tracking-tight">Wattwise</span>
+            <GradientText colors={['#22d3ee', '#4ade80', '#facc15']} animationSpeed={6} className="text-sm font-bold tracking-tight">Wattwise</GradientText>
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-yellow-400/15 text-yellow-400 border border-yellow-400/20">
               DEMO
             </span>

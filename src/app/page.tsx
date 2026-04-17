@@ -10,6 +10,8 @@ import HintOverlay from "@/components/HintOverlay";
 import TutorialOnboarding from "@/components/TutorialOnboarding";
 import PreferencesModal from "@/components/PreferencesModal";
 import FeedbackBanner from "@/components/FeedbackBanner";
+import SplashCursor from "@/components/ui/SplashCursor";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
 import { useMapLocation } from "@/hooks/useMapLocation";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
@@ -97,6 +99,9 @@ export default function Home() {
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-background">
+      {/* Fluid cursor effect */}
+      <SplashCursor />
+
       {/* Full-screen map */}
       <div className="absolute inset-0">
         <MapView
@@ -121,12 +126,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Ungültiger Klick – Toast */}
+      {/* Ungültiger Klick – Alert */}
       {invalidMsg && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] pointer-events-none">
-          <div className="rounded-xl border border-destructive/40 bg-card/95 backdrop-blur-md px-5 py-3 shadow-xl text-sm text-destructive text-center max-w-xs">
-            {invalidMsg}
-          </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2000] pointer-events-none max-w-xs w-full">
+          <Alert variant="destructive" className="bg-card/95 backdrop-blur-md shadow-xl text-center">
+            <AlertDescription>{invalidMsg}</AlertDescription>
+          </Alert>
         </div>
       )}
 

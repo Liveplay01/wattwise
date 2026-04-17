@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
 import { X, Send, CheckCircle, Sparkles, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { cn } from "@/lib/utils";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -54,16 +63,15 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
   const fillPct = Math.min(100, (charCount / MAX_CHARS) * 100);
 
   return (
-    <Dialog.Root open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[2600] bg-black/75 backdrop-blur-sm" />
-        <Dialog.Content
-          className="fixed inset-0 z-[2601] flex items-center justify-center p-4"
-          aria-describedby="feedback-desc"
-        >
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogPortal>
+        <DialogOverlay className="z-[2600] bg-black/75 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[2601] flex items-center justify-center p-4 pointer-events-none">
           <div
-            className="w-full max-w-lg bg-card border border-border/80 rounded-2xl shadow-2xl overflow-hidden"
+            className="w-full max-w-lg bg-card border border-border/80 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
             style={{ animation: "fb-modal-in 0.35s cubic-bezier(0.16,1,0.3,1) both" }}
+            role="dialog"
+            aria-modal="true"
           >
             {/* Decorative header */}
             <div className="relative bg-gradient-to-br from-primary/20 via-primary/8 to-transparent px-6 pt-5 pb-4 border-b border-border/60 overflow-hidden">
@@ -78,13 +86,13 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
                     <MessageSquare className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <Dialog.Title className="font-bold text-foreground text-base leading-tight">
+                    <DialogTitle className="font-bold text-foreground text-base leading-tight">
                       Dein Feedback
-                    </Dialog.Title>
-                    <Dialog.Description id="feedback-desc" className="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5">
+                    </DialogTitle>
+                    <DialogDescription className="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5">
                       <Sparkles className="w-3 h-3 text-primary/60" />
                       Anonym · ohne Registrierung · direkt für alle sichtbar
-                    </Dialog.Description>
+                    </DialogDescription>
                   </div>
                 </div>
                 <button
@@ -153,17 +161,22 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
 
                   {/* Progress bar + char counter */}
                   <div className="space-y-1.5">
-                    <div className="h-0.5 w-full rounded-full bg-border overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-300 ${
-                          isOverLimit ? "bg-destructive" : fillPct > 80 ? "bg-yellow-400" : "bg-primary"
-                        }`}
-                        style={{ width: `${fillPct}%` }}
-                      />
-                    </div>
+                    <Progress
+                      value={fillPct}
+                      className={cn(
+                        "h-0.5 bg-border",
+                        isOverLimit
+                          ? "[&>div]:bg-destructive"
+                          : fillPct > 80
+                          ? "[&>div]:bg-yellow-400"
+                          : "[&>div]:bg-primary"
+                      )}
+                    />
                     <div className="flex items-center justify-between">
                       {status === "error" && errorMsg ? (
-                        <p className="text-xs text-destructive">{errorMsg}</p>
+                        <Alert variant="destructive" className="py-1.5 px-3 flex-1 mr-2">
+                          <AlertDescription className="text-xs">{errorMsg}</AlertDescription>
+                        </Alert>
                       ) : (
                         <p className="text-[11px] text-muted-foreground/50">
                           {text.length === 0 ? "Sei ehrlich — wir freuen uns über jedes Feedback 🙌" : ""}
@@ -197,8 +210,8 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
               )}
             </div>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        </div>
+      </DialogPortal>
+    </Dialog>
   );
 }
