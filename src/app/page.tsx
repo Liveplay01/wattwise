@@ -24,6 +24,7 @@ export default function Home() {
   const { preferences, setPreferences, skipForever, setSkipForever } = useUserPreferences();
   const { theme, toggleTheme } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
 
   // Pending location — set before preferences modal, committed after
@@ -119,7 +120,7 @@ export default function Home() {
       </div>
 
       {/* Top bar with logo + WDG badge + tutorial */}
-      <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} />
+      <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} onSideDrawerChange={setSideDrawerOpen} />
 
       {/* Demo banner + search stacked, unterhalb TopBar */}
       <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">
@@ -154,7 +155,7 @@ export default function Home() {
       <TutorialOnboarding />
 
       {/* Feedback banner (bottom-right) */}
-      <FeedbackBanner drawerOpen={drawerOpen} />
+      <FeedbackBanner drawerOpen={drawerOpen || sideDrawerOpen} />
 
       {/* Pre-analysis preferences modal */}
       <PreferencesModal

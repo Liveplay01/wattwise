@@ -41,12 +41,19 @@ interface TopBarProps {
   theme: "dark" | "light";
   toggleTheme: () => void;
   onOpenPreferences: () => void;
+  onSideDrawerChange?: (open: boolean) => void;
 }
 
-export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBarProps) {
+export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDrawerChange }: TopBarProps) {
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [feedbackListOpen, setFeedbackListOpen] = useState(false);
+
+  function openSideDrawer(setter: (v: boolean) => void) {
+    setter(true);
+    onSideDrawerChange?.(true);
+  }
+
 
   return (
     <>
@@ -64,7 +71,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
           {/* Rechts: Buttons + WDG Badge */}
           <div className="pointer-events-auto flex items-center gap-2">
             <button
-              onClick={() => setFeedbackListOpen(true)}
+              onClick={() => openSideDrawer(setFeedbackListOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
               aria-label="Community-Feedback anzeigen"
             >
@@ -72,7 +79,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
             </button>
 
             <button
-              onClick={() => setInfoOpen(true)}
+              onClick={() => openSideDrawer(setInfoOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
               aria-label="API-Informationen"
             >
@@ -101,7 +108,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
             </button>
 
             <button
-              onClick={() => setTutorialOpen(true)}
+              onClick={() => openSideDrawer(setTutorialOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl p-2 border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
               aria-label="Anleitung"
             >
@@ -116,10 +123,10 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
       </header>
 
       {/* ── Feedback List Drawer ────────────────────────────────── */}
-      <FeedbackListDrawer open={feedbackListOpen} onOpenChange={setFeedbackListOpen} />
+      <FeedbackListDrawer open={feedbackListOpen} onOpenChange={(v) => { setFeedbackListOpen(v); if (!v) onSideDrawerChange?.(false); }} />
 
       {/* ── Tutorial Drawer ─────────────────────────────────────── */}
-      <SideDrawer open={tutorialOpen} onOpenChange={setTutorialOpen}>
+      <SideDrawer open={tutorialOpen} onOpenChange={(v) => { setTutorialOpen(v); if (!v) onSideDrawerChange?.(false); }}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
@@ -232,7 +239,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences }: TopBar
       </SideDrawer>
 
       {/* ── Info / API Drawer ────────────────────────────────────── */}
-      <SideDrawer open={infoOpen} onOpenChange={setInfoOpen}>
+      <SideDrawer open={infoOpen} onOpenChange={(v) => { setInfoOpen(v); if (!v) onSideDrawerChange?.(false); }}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-blue-400/20 flex items-center justify-center">

@@ -110,7 +110,10 @@ export default function PreferencesModal({
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onSkip} />
 
       {/* Card */}
-      <div className="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      <div
+        className="relative w-full max-w-md bg-card border border-border rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+        style={{ animation: "prefs-modal-in 0.4s cubic-bezier(0.16,1,0.3,1) both" }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">

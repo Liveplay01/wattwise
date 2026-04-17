@@ -7,7 +7,6 @@ import type { CostInfo, EnergyType } from "@/lib/energy/types";
 import { Abbr, ABBR } from "@/components/ui/abbr";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import BorderGlow from "@/components/ui/BorderGlow";
 
 const ICONS = { solar: Sun, wind: Wind, water: Droplets, geothermal: Thermometer };
 const LABELS = { solar: "Solaranlage", wind: "Windanlage", water: "Wasserkraft", geothermal: "Geothermie" };
@@ -15,12 +14,6 @@ const COLORS = { solar: "text-yellow-400", wind: "text-blue-400", water: "text-c
 const BG_COLORS = { solar: "bg-yellow-400/10", wind: "bg-blue-400/10", water: "bg-cyan-400/10", geothermal: "bg-orange-400/10" };
 const BAR_COLORS = { solar: "bg-yellow-400", wind: "bg-blue-400", water: "bg-cyan-400", geothermal: "bg-orange-400" };
 
-const GLOW_COLORS: Record<EnergyType, string[]> = {
-  solar:      ['#facc15', '#fb923c', '#fde68a'],
-  wind:       ['#60a5fa', '#93c5fd', '#38bdf8'],
-  water:      ['#22d3ee', '#67e8f9', '#a5f3fc'],
-  geothermal: ['#fb923c', '#f97316', '#fed7aa'],
-};
 
 const SCORE_TOOLTIPS: Record<EnergyType, string> = {
   solar:      "Basiert auf Sonneneinstrahlung (kWh/m²/Tag)",
@@ -56,7 +49,7 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
   const cardContent = (
     <div
       className={cn(
-        "rounded-lg border transition-all duration-200 w-full",
+        "rounded-lg border transition-all duration-200",
         isRecommended
           ? "border-primary/50 bg-primary/5 shadow-[0_0_15px_rgba(62,207,142,0.1)]"
           : "border-border bg-card"
@@ -193,22 +186,6 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
       </Accordion>
     </div>
   );
-
-  if (isRecommended) {
-    return (
-      <BorderGlow
-        colors={GLOW_COLORS[type]}
-        borderRadius={8}
-        backgroundColor="transparent"
-        glowIntensity={0.8}
-        glowRadius={28}
-        fillOpacity={0}
-        className="w-full"
-      >
-        {cardContent}
-      </BorderGlow>
-    );
-  }
 
   return cardContent;
 }
