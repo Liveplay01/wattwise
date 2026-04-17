@@ -203,8 +203,9 @@ export default function EnergyScoreCard({ type, score, adjustedScore, isRecommen
         colors={GLOW_COLORS[type]}
         borderRadius={8}
         backgroundColor="transparent"
-        glowIntensity={0.9}
-        glowRadius={30}
+        glowIntensity={0.8}
+        glowRadius={28}
+        fillOpacity={0}
         className="w-full"
       >
         {cardContent}
