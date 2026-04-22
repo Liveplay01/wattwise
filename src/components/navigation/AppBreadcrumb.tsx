@@ -9,22 +9,23 @@ import {
 } from "@/components/ui/breadcrumb";
 import { cn } from "@/lib/utils";
 
-type Step = "start" | "analyse" | "ergebnis";
+type Step = "preferences" | "start" | "analyse" | "ergebnis";
 
-const STEPS: { id: Step; label: string }[] = [
-  { id: "start", label: "Standort" },
-  { id: "analyse", label: "Analyse" },
-  { id: "ergebnis", label: "Ergebnis" },
+const STEPS: { label: string }[] = [
+  { label: "Einstellungen" },
+  { label: "Analyse" },
+  { label: "Ergebnis" },
 ];
 
 const STEP_ORDER: Record<Step, number> = {
+  preferences: 0,
   start: 0,
   analyse: 1,
   ergebnis: 2,
 };
 
 interface AppBreadcrumbProps {
-  step: Step;
+  step: "preferences" | "start" | "analyse" | "ergebnis";
 }
 
 export default function AppBreadcrumb({ step }: AppBreadcrumbProps) {
@@ -34,7 +35,7 @@ export default function AppBreadcrumb({ step }: AppBreadcrumbProps) {
     <Breadcrumb>
       <BreadcrumbList className="gap-1 sm:gap-1.5 flex-nowrap">
         {STEPS.map((s, i) => (
-          <div key={s.id} className="flex items-center gap-1 sm:gap-1.5">
+          <div key={s.label} className="flex items-center gap-1 sm:gap-1.5">
             <BreadcrumbItem>
               {i === currentIndex ? (
                 <BreadcrumbPage

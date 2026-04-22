@@ -27,8 +27,10 @@ export default function Home() {
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
 
-  // Pending location — set before preferences modal, committed after
+  // Pending location — committed after prefs confirmed in drawer
   const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null);
+  const [showPrefsInDrawer, setShowPrefsInDrawer] = useState(false);
+  // Standalone prefs modal — only for TopBar "edit prefs" button
   const [prefsModalOpen, setPrefsModalOpen] = useState(false);
 
   const { data, isLoading, error } = useEnergyAnalysis(location, preferences);
@@ -37,47 +39,65 @@ export default function Home() {
     (lat: number, lng: number, address?: string) => {
       if (!isInGermany(lat, lng)) return;
       if (skipForever) {
-        // Skip modal, use persisted preferences directly
         const success = selectLocation(lat, lng, address);
         if (success) setDrawerOpen(true);
       } else {
         setPendingLocation({ lat, lng, address });
-        setPrefsModalOpen(true);
+        setShowPrefsInDrawer(true);
+        setDrawerOpen(true);
       }
     },
     [skipForever, selectLocation]
   );
 
+  // Called from AnalysisDrawer preferences step (map-click flow)
+  const handleDrawerPrefsConfirm = useCallback(
+    (prefs: UserPreferences, forever: boolean) => {
+      setPreferences(prefs);
+      if (forever) setSkipForever(true);
+      setShowPrefsInDrawer(false);
+      if (pendingLocation) {
+        selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
+        setPendingLocation(null);
+      }
+    },
+    [pendingLocation, setPreferences, setSkipForever, selectLocation]
+  );
+
+  const handleDrawerPrefsSkip = useCallback(() => {
+    setShowPrefsInDrawer(false);
+    if (pendingLocation) {
+      selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
+      setPendingLocation(null);
+    }
+  }, [pendingLocation, selectLocation]);
+
+  // Called from TopBar standalone preferences modal
   const handlePrefsConfirm = useCallback(
     (prefs: UserPreferences, forever: boolean) => {
       setPreferences(prefs);
       if (forever) setSkipForever(true);
       setPrefsModalOpen(false);
-      if (pendingLocation) {
-        // Triggered from map click — select location and open drawer
-        const success = selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
-        if (success) setDrawerOpen(true);
-        setPendingLocation(null);
-      } else if (location) {
-        // Triggered from TopBar — re-open drawer so results refresh with new prefs
-        setDrawerOpen(true);
-      }
+      if (location) setDrawerOpen(true);
     },
-    [pendingLocation, location, setPreferences, setSkipForever, selectLocation]
+    [location, setPreferences, setSkipForever]
   );
 
   const handlePrefsSkip = useCallback(() => {
     setPrefsModalOpen(false);
-    if (pendingLocation) {
-      const success = selectLocation(pendingLocation.lat, pendingLocation.lng, pendingLocation.address);
-      if (success) setDrawerOpen(true);
-      setPendingLocation(null);
-    }
-  }, [pendingLocation, selectLocation]);
+  }, []);
 
   const handleOpenPreferences = useCallback(() => {
     setPrefsModalOpen(true);
   }, []);
+
+  const handleDrawerOpenChange = useCallback((open: boolean) => {
+    setDrawerOpen(open);
+    if (!open && showPrefsInDrawer) {
+      setShowPrefsInDrawer(false);
+      setPendingLocation(null);
+    }
+  }, [showPrefsInDrawer]);
 
   const handleMapClick = useCallback(
     (lat: number, lng: number) => {
@@ -168,10 +188,14 @@ export default function Home() {
       {/* Analysis Drawer */}
       <AnalysisDrawer
         open={drawerOpen}
-        onOpenChange={setDrawerOpen}
+        onOpenChange={handleDrawerOpenChange}
         isLoading={isLoading}
         data={data}
         error={error}
+        showPreferences={showPrefsInDrawer}
+        initialPreferences={preferences}
+        onPrefsConfirm={handleDrawerPrefsConfirm}
+        onPrefsSkip={handleDrawerPrefsSkip}
       />
     </main>
   );

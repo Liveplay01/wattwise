@@ -22,18 +22,18 @@ export default function FeedbackBanner({ drawerOpen = false }: { drawerOpen?: bo
     localStorage.setItem(DISMISSED_KEY, "1");
   }
 
-  if (!visible || drawerOpen) return null;
+  if (!visible) return null;
 
   return (
     <>
       {/* Banner */}
       <div
-        className="fixed right-6 z-[2500] pointer-events-auto"
+        className={`fixed right-6 z-[2500] transition-all duration-500 ease-in-out${drawerOpen ? " opacity-0 translate-y-3 pointer-events-none" : " pointer-events-auto"}`}
         style={{
           bottom: "7.5rem", // above leaflet zoom controls (~90px)
-          animation: "fb-slide-up 0.5s cubic-bezier(0.16,1,0.3,1) both",
-          animationDelay: "1.2s",
-          opacity: 0,
+          animation: drawerOpen ? undefined : "fb-slide-up 0.5s cubic-bezier(0.16,1,0.3,1) both",
+          animationDelay: drawerOpen ? undefined : "1.2s",
+          opacity: drawerOpen ? 0 : undefined,
         }}
       >
         <div
