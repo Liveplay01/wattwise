@@ -142,14 +142,14 @@ function DrawerPreferences({ initialPreferences, onConfirm, onSkip }: DrawerPref
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={onSkip}
-          className="flex-1 text-sm text-muted-foreground hover:text-foreground border border-border rounded-xl py-2.5 transition-colors"
+          className="flex-1 text-sm text-muted-foreground hover:text-foreground border border-border rounded-xl min-h-12 transition-colors"
         >
           Überspringen
         </button>
         <button
           onClick={() => onConfirm(localPrefs, nichtMehrAnzeigen)}
           className={cn(
-            "flex-[2] text-sm font-semibold rounded-xl py-2.5 transition-all duration-150",
+            "flex-[2] text-sm font-semibold rounded-xl min-h-12 transition-all duration-150",
             hasAnyActive
               ? "bg-primary text-primary-foreground hover:opacity-90"
               : "bg-primary/80 text-primary-foreground hover:bg-primary"

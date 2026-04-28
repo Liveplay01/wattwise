@@ -131,7 +131,7 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setWriteOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
+                className="flex items-center gap-1.5 px-3 min-h-12 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity"
                 aria-label="Feedback schreiben"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -139,7 +139,7 @@ export default function FeedbackListDrawer({ open, onOpenChange }: FeedbackListD
               </button>
               <button
                 onClick={() => onOpenChange(false)}
-                className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-lg"
+                className="text-muted-foreground hover:text-foreground transition-colors min-h-12 min-w-12 flex items-center justify-center rounded-xl"
                 aria-label="Schließen"
               >
                 <X className="w-5 h-5" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import MapView from "@/components/map/MapView";
 import TopBar from "@/components/navigation/TopBar";
 import AddressSearch from "@/components/search/AddressSearch";
@@ -26,6 +26,11 @@ export default function Home() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
 
   // Pending location — committed after prefs confirmed in drawer
   const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number; address?: string } | null>(null);
@@ -120,13 +125,15 @@ export default function Home() {
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-background">
-      {/* Fluid cursor effect */}
-      <SplashCursor
-        COLORS={['#22d3ee', '#4ade80', '#facc15']}
-        DENSITY_DISSIPATION={5}
-        SPLAT_RADIUS={0.15}
-        SPLAT_FORCE={4000}
-      />
+      {/* Fluid cursor effect — desktop only */}
+      {!isTouchDevice && (
+        <SplashCursor
+          COLORS={['#22d3ee', '#4ade80', '#facc15']}
+          DENSITY_DISSIPATION={5}
+          SPLAT_RADIUS={0.15}
+          SPLAT_FORCE={4000}
+        />
+      )}
 
       {/* Full-screen map */}
       <div className="absolute inset-0">

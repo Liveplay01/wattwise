@@ -121,6 +121,13 @@
   animation: score-fill 0.8s ease-out forwards;
 }
 
+/* ─── Mobile: safe-area inset padding ───────────────────── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
 /* ─── Tutorial / Onboarding Animations ──────────────────── */
 
 @keyframes tutorial-overlay-in {
