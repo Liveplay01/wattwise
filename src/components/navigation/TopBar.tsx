@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Info, MessageSquare, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
+import { HelpCircle, Info, X, Zap, Droplets, ExternalLink, Sun, Moon, SlidersHorizontal } from "lucide-react";
 import { Drawer as DrawerPrimitive } from "vaul";
-import FeedbackListDrawer from "@/components/FeedbackListDrawer";
 import GradientText from "@/components/ui/GradientText";
 
 function WattwiseLogo({ className }: { className?: string }) {
@@ -47,7 +46,6 @@ interface TopBarProps {
 export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDrawerChange }: TopBarProps) {
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
-  const [feedbackListOpen, setFeedbackListOpen] = useState(false);
 
   function openSideDrawer(setter: (v: boolean) => void) {
     setter(true);
@@ -70,14 +68,6 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
 
           {/* Rechts: Buttons + WDG Badge */}
           <div className="pointer-events-auto flex items-center gap-1.5">
-            <button
-              onClick={() => openSideDrawer(setFeedbackListOpen)}
-              className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
-              aria-label="Community-Feedback anzeigen"
-            >
-              <MessageSquare className="w-5 h-5" />
-            </button>
-
             <button
               onClick={() => openSideDrawer(setInfoOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
@@ -121,9 +111,6 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
           </div>
         </div>
       </header>
-
-      {/* ── Feedback List Drawer ────────────────────────────────── */}
-      <FeedbackListDrawer open={feedbackListOpen} onOpenChange={(v) => { setFeedbackListOpen(v); if (!v) onSideDrawerChange?.(false); }} />
 
       {/* ── Tutorial Drawer ─────────────────────────────────────── */}
       <SideDrawer open={tutorialOpen} onOpenChange={(v) => { setTutorialOpen(v); if (!v) onSideDrawerChange?.(false); }}>

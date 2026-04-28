@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { LocateFixed, Loader2 } from "lucide-react";
 import MapView from "@/components/map/MapView";
 import TopBar from "@/components/navigation/TopBar";
 import AddressSearch from "@/components/search/AddressSearch";
@@ -9,7 +10,6 @@ import DemoBanner from "@/components/DemoBanner";
 import HintOverlay from "@/components/HintOverlay";
 import TutorialOnboarding from "@/components/TutorialOnboarding";
 import PreferencesModal from "@/components/PreferencesModal";
-import FeedbackBanner from "@/components/FeedbackBanner";
 import SplashCursor from "@/components/ui/SplashCursor";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEnergyAnalysis } from "@/hooks/useEnergyAnalysis";
@@ -24,7 +24,6 @@ export default function Home() {
   const { preferences, setPreferences, skipForever, setSkipForever } = useUserPreferences();
   const { theme, toggleTheme } = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const [invalidMsg, setInvalidMsg] = useState<string | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
@@ -123,6 +122,29 @@ export default function Home() {
     setTimeout(() => setInvalidMsg(null), 3000);
   }, []);
 
+  const [locating, setLocating] = useState(false);
+
+  const handleGeolocate = useCallback(() => {
+    if (!navigator.geolocation) {
+      setInvalidMsg("Geolokalisierung wird von diesem Browser nicht unterstützt.");
+      setTimeout(() => setInvalidMsg(null), 3000);
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setLocating(false);
+        handleLocationSelect(coords.latitude, coords.longitude);
+      },
+      () => {
+        setLocating(false);
+        setInvalidMsg("Standort konnte nicht ermittelt werden. Bitte Berechtigung prüfen.");
+        setTimeout(() => setInvalidMsg(null), 4000);
+      },
+      { timeout: 10000 }
+    );
+  }, [handleLocationSelect]);
+
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-background">
       {/* Fluid cursor effect — desktop only */}
@@ -147,15 +169,29 @@ export default function Home() {
       </div>
 
       {/* Top bar with logo + WDG badge + tutorial */}
-      <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} onSideDrawerChange={setSideDrawerOpen} />
+      <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} />
 
       {/* Demo banner + search stacked, unterhalb TopBar */}
       <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">
         <div className="w-full max-w-lg pointer-events-auto">
           <DemoBanner />
         </div>
-        <div className="w-full max-w-lg pointer-events-auto">
-          <AddressSearch onSelect={handleAddressSelect} />
+        <div className="w-full max-w-lg pointer-events-auto flex gap-2 items-stretch">
+          <div className="flex-1 min-w-0">
+            <AddressSearch onSelect={handleAddressSelect} />
+          </div>
+          <button
+            onClick={handleGeolocate}
+            disabled={locating}
+            className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors disabled:opacity-60"
+            aria-label="Meinen Standort verwenden"
+            title="Meinen Standort verwenden"
+          >
+            {locating
+              ? <Loader2 className="w-5 h-5 animate-spin" />
+              : <LocateFixed className="w-5 h-5" />
+            }
+          </button>
         </div>
       </div>
 
@@ -180,9 +216,6 @@ export default function Home() {
 
       {/* First-time user tutorial */}
       <TutorialOnboarding />
-
-      {/* Feedback banner (bottom-right) */}
-      <FeedbackBanner drawerOpen={drawerOpen || sideDrawerOpen} />
 
       {/* Pre-analysis preferences modal */}
       <PreferencesModal
