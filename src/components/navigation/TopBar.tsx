@@ -55,8 +55,50 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
 
   return (
     <>
-      <header className="absolute top-0 left-0 right-0 z-[1000] pointer-events-none">
-        <div className="flex items-center justify-between px-4 pt-4">
+      <header className="absolute top-0 left-0 right-0 z-[1000]">
+        {/* Mobile: einheitliche Leiste */}
+        <div className="flex sm:hidden items-center justify-between px-4 h-14 bg-card/90 backdrop-blur-md border-b border-border/40 shadow-sm pointer-events-auto">
+          <div className="flex items-center gap-2">
+            <WattwiseLogo className="w-6 h-6" />
+            <GradientText colors={['#22d3ee', '#4ade80', '#facc15']} animationSpeed={6} className="text-sm font-bold tracking-tight">Wattwise</GradientText>
+            <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-yellow-400/15 text-yellow-400 border border-yellow-400/20">
+              DEMO
+            </span>
+          </div>
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={() => openSideDrawer(setInfoOpen)}
+              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
+              aria-label="API-Informationen"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onOpenPreferences}
+              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
+              aria-label="Analyse-Präferenzen anpassen"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
+              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => openSideDrawer(setTutorialOpen)}
+              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
+              aria-label="Anleitung"
+            >
+              <HelpCircle className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop: schwebende Pills */}
+        <div className="hidden sm:flex items-center justify-between px-4 pt-4 pointer-events-none">
           {/* Logo */}
           <div className="pointer-events-auto flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 border border-border/60 shadow-lg">
             <WattwiseLogo className="w-7 h-7" />
@@ -75,8 +117,6 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
             >
               <Info className="w-5 h-5" />
             </button>
-
-            {/* Präferenzen anpassen */}
             <button
               onClick={onOpenPreferences}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
@@ -84,19 +124,13 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
             >
               <SlidersHorizontal className="w-5 h-5" />
             </button>
-
-            {/* Light / Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
               aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
             >
-              {theme === "dark"
-                ? <Sun className="w-5 h-5" />
-                : <Moon className="w-5 h-5" />
-              }
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-
             <button
               onClick={() => openSideDrawer(setTutorialOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
@@ -104,7 +138,7 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
             >
               <HelpCircle className="w-5 h-5" />
             </button>
-            <div className="hidden sm:flex bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 border border-border/60 shadow-lg flex-col items-end">
+            <div className="flex bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 border border-border/60 shadow-lg flex-col items-end">
               <p className="text-[10px] text-muted-foreground leading-tight text-right">Schulprojekt</p>
               <p className="text-[10px] font-semibold text-foreground leading-tight whitespace-nowrap">WDG Wuppertal</p>
             </div>

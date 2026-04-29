@@ -172,7 +172,7 @@ export default function Home() {
       <TopBar theme={theme} toggleTheme={toggleTheme} onOpenPreferences={handleOpenPreferences} />
 
       {/* Demo banner + search stacked, unterhalb TopBar */}
-      <div className="absolute top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">
+      <div className="absolute top-14 sm:top-[4.5rem] left-0 right-0 z-[1000] px-4 flex flex-col items-center gap-2 pointer-events-none">
         <div className="w-full max-w-lg pointer-events-auto">
           <DemoBanner />
         </div>
@@ -208,7 +208,7 @@ export default function Home() {
       {!location && <HintOverlay />}
 
       {/* Footer */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[999] pointer-events-none">
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[999] pointer-events-none hidden sm:block">
         <p className="text-[10px] text-muted-foreground/50 whitespace-nowrap">
           Ein Schulprojekt des Wilhelm-Dörpfeld-Gymnasiums Wuppertal
         </p>
