@@ -67,13 +67,6 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
           </div>
           <div className="flex items-center gap-0.5">
             <button
-              onClick={() => openSideDrawer(setInfoOpen)}
-              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
-              aria-label="API-Informationen"
-            >
-              <Info className="w-4 h-4" />
-            </button>
-            <button
               onClick={onOpenPreferences}
               className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
               aria-label="Analyse-Präferenzen anpassen"
@@ -81,11 +74,11 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
               <SlidersHorizontal className="w-4 h-4" />
             </button>
             <button
-              onClick={toggleTheme}
+              onClick={() => openSideDrawer(setInfoOpen)}
               className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
-              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+              aria-label="API-Informationen"
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              <Info className="w-4 h-4" />
             </button>
             <button
               onClick={() => openSideDrawer(setTutorialOpen)}
@@ -93,6 +86,13 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
               aria-label="Anleitung"
             >
               <HelpCircle className="w-4 h-4" />
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="min-h-10 min-w-10 flex items-center justify-center rounded-lg text-muted-foreground hover:text-primary hover:bg-white/10 transition-colors"
+              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
           </div>
         </div>
@@ -111,13 +111,6 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
           {/* Rechts: Buttons + WDG Badge */}
           <div className="pointer-events-auto flex items-center gap-1.5">
             <button
-              onClick={() => openSideDrawer(setInfoOpen)}
-              className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
-              aria-label="API-Informationen"
-            >
-              <Info className="w-5 h-5" />
-            </button>
-            <button
               onClick={onOpenPreferences}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
               aria-label="Analyse-Präferenzen anpassen"
@@ -125,11 +118,11 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
               <SlidersHorizontal className="w-5 h-5" />
             </button>
             <button
-              onClick={toggleTheme}
+              onClick={() => openSideDrawer(setInfoOpen)}
               className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
-              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+              aria-label="API-Informationen"
             >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <Info className="w-5 h-5" />
             </button>
             <button
               onClick={() => openSideDrawer(setTutorialOpen)}
@@ -137,6 +130,13 @@ export default function TopBar({ theme, toggleTheme, onOpenPreferences, onSideDr
               aria-label="Anleitung"
             >
               <HelpCircle className="w-5 h-5" />
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="bg-card/90 backdrop-blur-md rounded-xl min-h-12 min-w-12 flex items-center justify-center border border-border/60 shadow-lg text-muted-foreground hover:text-primary transition-colors"
+              aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             <div className="flex bg-card/90 backdrop-blur-md rounded-xl px-3 py-2 border border-border/60 shadow-lg flex-col items-end">
               <p className="text-[10px] text-muted-foreground leading-tight text-right">Schulprojekt</p>
